@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{%block title%}{%endblock%}</title>
+    <style>
+        * {
+           box-sizing: border-box; 
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+            width: 100%;
+            font-size: 18px;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+            min-height: 60px;
+        }
+
+        .header:has(h1) {
+            justify-content: center;
+        }
+
+        h1 {
+            color: inherit;
+        }
+
+        .option-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .option-container a {
+            text-decoration: none;
+            transition: background-color 0.3s;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .option-container a:hover {
+            background-color: #7ebcff;
+        }
+
+        .nav-item {
+            width: 7rem;
+        }
+
+        a, a:visited, a:hover, a:active {
+            color: inherit;
+        }
+
+    </style>
+    {%block stylesheet%}{%endblock%}
+</head>
+<body>
+    <nav class="header">
+        <!-- <a href="">Laboratoře z Fyziky FS ČVUT</a> -->
+        {% if default_title %}
+            <h1>Laboratoře z Fyziky FS ČVUT</h1>
+        {% else %}
+
+        <div class="option-container" >
+            <a href="{% url 'home' %}" class="nav-item">
+                    <p>Domů</p>
+            </a>
+
+            <a href="" class="nav-item">
+                    <p>Přihlášené</p>
+            </a>
+
+            {% if user.is_staff %}
+            <a href="{% url 'topics'%}" class="nav-item">
+                    <p>Témata</p>
+            </a>
+            <a href="" class="nav-item">
+                    <p>Vytvořit termín</p>
+            </a>
+            {% endif %}
+        </div>
+        <div class="option-container">
+            <p style="margin-right: 5px;">
+                Přihlášen jako: {{user.email}}
+            </p>
+            <a href="{% url 'logout'%}" class="nav-item">
+                <p>Odhlásit</p>
+            </a>
+        </div>
+        
+        {% endif %}
+    </nav>
+
+    {%block content%}
+    {%endblock%}
+
+    <script>
+        function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;}
+    </script>
+
+    {% block script %}
+    {% endblock %}
+    
+</body>
+</html>

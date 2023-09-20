@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+
+{% block title%}Home{% endblock%}
+
+{% load static %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'home.css'%}">
+{% endblock %}
+
+{%block content%}
+    <div class="container">
+        <a href="">
+        <div class="lab-item">
+                <h3>Lab 101</h3>
+                <p>Date: September 20, 2023</p>
+                <p>Free Capacity: 12</p>
+            </div>
+        </a>
+        <a href="">
+        <div class="lab-item">
+                <h3>Lab 102</h3>
+                <p>Date: September 21, 2023</p>
+                <p>Free Capacity: 8</p>
+            </div>
+        </a>
+        <a href="">
+        <div class="lab-item">
+                <h3>Lab 102</h3>
+                <p>Date: September 21, 2023</p>
+                <p>Free Capacity: 8</p>
+            </div>
+        </a>
+        <!-- <a href="">
+        <div class="lab-item">
+                <h3>Lab 102</h3>
+                <p>Date: September 21, 2023</p>
+                <p>Free Capacity: 8</p>
+            </div>
+        </a>
+        <a href="">
+        <div class="lab-item">
+                <h3>Lab 102</h3>
+                <p>Date: September 21, 2023</p>
+                <p>Free Capacity: 8</p>
+            </div>
+        </a>
+        <a href="">
+        <div class="lab-item">
+                <h3>Lab 102</h3>
+                <p>Date: September 21, 2023</p>
+                <p>Free Capacity: 8</p>
+            </div>
+        </a> -->
+    </div>
+
+{% endblock %}
