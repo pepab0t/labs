@@ -28,7 +28,7 @@ def handle_validation(fn):
             return fn(request, *args, **kwargs)
         except ValidationError as e:
             return JsonResponse(
-                {"message": e.message, "error": "validation"}, status=422
+                {"message": ", ".join(e.messages), "error": "validation"}, status=422
             )
 
     return wrapper

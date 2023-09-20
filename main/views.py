@@ -6,8 +6,8 @@ from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 from django.db.utils import IntegrityError
 
-from .forms import LoginForm, RegisterForm, ValidationError
-from .models import CustomUser
+from .forms import LoginForm, RegisterForm, ValidationError, CreateEventForm
+from .models import CustomUser, LabTopic, LabEvent
 
 from django.contrib.admin.views.decorators import staff_member_required
 
@@ -123,3 +123,34 @@ def logout_user(request: HttpRequest):
 @staff_member_required(redirect_field_name="home")
 def show_topics(request: HttpRequest):
     return render(request, "topics.html")
+
+
+@staff_member_required(redirect_field_name="home")
+def create_event(request: HttpRequest):
+    topics = [(topic.id, topic.title) for topic in LabTopic.objects.all()]  # type: ignore
+    form = CreateEventForm(topics, initial={"capacity": 1})
+
+    if request.method == "POST":
+        form = CreateEventForm(topics, request.POST)
+        if not form.is_valid():
+            return render(request, "create_event.html", {"form": form})
+
+        lab_event = LabEvent(
+            capacity=form.cleaned_data["capacity"],
+            close_login=form.cleaned_data["close_login"],
+            close_logout=form.cleaned_data["close_logout"],
+            lab_datetime=form.cleaned_data["lab_datetime"],
+        )
+        lab_event.created_by = request.user
+        try:
+            lab_event.save()
+        except ValidationError as e:
+            return render(request, "create_event.html", {"form": form})
+
+        for topic_id in form.cleaned_data["topics"]:
+            lab_topic = LabTopic.objects.get(pk=int(topic_id))
+            lab_event.topics.add(lab_topic)
+
+        return redirect("home")
+
+    return render(request, "create_event.html", {"form": form})

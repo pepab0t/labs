@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Lab</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f3f3f3;
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .lab-topics .lab-topic {
+            margin-bottom: 10px;
+        }
+
+        .lab-topic label {
+            font-size: 14px;
+            color: #555;
+            display: block;
+        }
+
+        .lab-topic input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        .submit-button {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .submit-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>Lab App</h1>
+    </div>
+    <div class="container">
+        <form>
+            <div class="form-group">
+                <label for="capacity">Lab Capacity (positive integer)</label>
+                <input type="number" id="capacity" name="capacity" required>
+            </div>
+            <div class="form-group">
+                <label>Lab Topics</label>
+                <div class="lab-topics">
+                    <div class="lab-topic">
+                        <input type="checkbox" id="topic1" name="topics" value="Topic 1">
+                        <label for="topic1">Topic 1</label>
+                    </div>
+                    <div class="lab-topic">
+                        <input type="checkbox" id="topic2" name="topics" value="Topic 2">
+                        <label for="topic2">Topic 2</label>
+                    </div>
+                    <!-- Add more lab topics here -->
+                </div>
+            </div>
+            <button type="submit" class="submit-button">Create Lab</button>
+        </form>
+    </div>
+</body>
+</html>

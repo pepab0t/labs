@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator, EmailValidator
 
-from datetime import timedelta
+from django.utils import timezone
 
 
 def more_than_one_word(value: str):
@@ -26,16 +26,23 @@ class LabTopic(models.Model):
 
 
 class LabEvent(models.Model):
-    datetime = models.DateTimeField(null=False, blank=False)
-    close_login = models.DateTimeField(null=True, blank=False)
-    close_logout = models.DateTimeField(null=True, blank=False)
+    lab_datetime = models.DateTimeField(null=False)
+    close_login = models.DateTimeField(null=True)
+    close_logout = models.DateTimeField(null=True)
+
+    capacity = models.PositiveIntegerField(
+        default=4, validators=[MinValueValidator(1), MaxValueValidator(1_000)]
+    )
+
+    users = models.ManyToManyField("CustomUser", related_name="labs")
+    topics = models.ManyToManyField(LabTopic, related_name="events")
 
     created_by = models.ForeignKey(
         "CustomUser", related_name="events_created", on_delete=models.CASCADE
     )
 
     def save(self, *args, **kwargs) -> None:
-        if self.datetime < self.datetime.now():
+        if self.lab_datetime < timezone.now():
             raise ValidationError("Date of Lab cannot be in the past", code="invalid")
 
         if self.close_login is None:
@@ -43,29 +50,19 @@ class LabEvent(models.Model):
         if self.close_logout is None:
             raise ValidationError("Close logout date must be specified", code="invalid")
 
-        if self.close_login > self.datetime:
+        if self.close_login > self.lab_datetime:
             raise ValidationError(
                 "Lab log in closing date cannot be greater than lab date",
                 code="invalid",
             )
 
-        if self.close_logout > self.datetime:
+        if self.close_logout > self.lab_datetime:
             raise ValidationError(
                 "Lab log out closing date cannot be greater than lab date",
                 code="invalid",
             )
 
         super().save(*args, **kwargs)
-
-
-class TopicCapacity:
-    topic = models.ForeignKey(LabTopic, on_delete=models.CASCADE, related_name="labs")
-    event = models.ForeignKey(LabEvent, on_delete=models.CASCADE, related_name="labs")
-    capacity = models.PositiveIntegerField(
-        validators=(MinValueValidator(1), MaxValueValidator(1_000))
-    )
-
-    users = models.ManyToManyField("CustomUser", related_name="labs")
 
 
 class UserManager(BaseUserManager):
