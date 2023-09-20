@@ -1,0 +1,45 @@
+{% extends 'base.html'%}
+
+{% load static %}
+
+{%block title%}
+    {{title}}
+{% endblock %}
+
+{%block stylesheet%}
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+{%endblock%}
+
+{%block content%}
+<main class="main-div">
+    <div class="login-container">
+        <h1>{{title}}</h1>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="input-group">
+                {{field.label_tag}}
+                {{field}}
+                {% for error in field.errors%}
+                <p class="note">{{error}}</p>
+                {% empty %}
+                <p class="note"></p>
+                {%endfor%}
+            </div>
+            {% endfor %}
+            
+            {% if login_only %}
+                <p>Ještě nemáte účet? <a href="{% url 'register'%}">Zaregistrovat</a></p>
+                <div class="input-group">
+                    <button type="submit">Přihlásit</button>
+                </div> 
+            {% else %}
+                <p>Máte již účet? <a href="{% url 'login'%}">Přihlásit</a></p>
+                <div class="input-group">
+                    <button type="submit">Registrovat</button>
+                </div> 
+            {% endif %}
+        </form>
+    </div>
+</main>
+{%endblock%}
