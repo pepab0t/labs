@@ -9,32 +9,48 @@
 
 {% block content %}
     <div class="container">
+        {% if form.topics|length == 0%}
+            <p>Pro založení hodiny nejprve vytvořte témata</p> 
+        {% else %}
         <form method="post" action="{% url 'create_event'%}">
             {% csrf_token %}
             <div class="form-group">
-                {{form.close_logout.label}}
-                {{form.close_logout}}
+            {{form.lab_datetime.label}}
+                {{form.lab_datetime}}
+                {% for error in form.lab_datetime.errors %}
+                    <p>{{error|escape}}</p>
+                {% endfor %}
             </div>
             <div class="form-group">
                 {{form.close_login.label}}
                 {{form.close_login}}
+                {% for error in form.close_login.errors %}
+                    <p>{{error|escape}}</p>
+                {% endfor %}
             </div>
             <div class="form-group">
-                {{form.lab_datetime.label}}
-                {{form.lab_datetime}}
+                {{form.close_logout.label}}
+                {{form.close_logout}}
+                {% for error in form.close_logout.errors %}
+                    <p>{{error|escape}}</p>
+                {% endfor %}
             </div>
             <div class="form-group">
                 {{form.capacity.label}}
                 {{form.capacity}}
+                {% for error in form.capacity.errors %}
+                    <p>{{error|escape}}</p>
+                {% endfor %}
             </div>
             <div class="form-group">
-                {{form.topic.label}}
                 <div class="lab-topics">
+                    {{form.topics.label}}
                     {{form.topics}}
                 </div>
             </div>
             <button type="submit" class="submit-button">Create Lab</button>
         </form>
+        {% endif %}
     </div>
 
 {% endblock %}

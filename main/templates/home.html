@@ -11,48 +11,38 @@
 
 {%block content%}
     <div class="container">
-        <a href="">
-        <div class="lab-item">
-                <h3>Lab 101</h3>
-                <p>Date: September 20, 2023</p>
-                <p>Free Capacity: 12</p>
-            </div>
-        </a>
-        <a href="">
-        <div class="lab-item">
-                <h3>Lab 102</h3>
-                <p>Date: September 21, 2023</p>
-                <p>Free Capacity: 8</p>
-            </div>
-        </a>
-        <a href="">
-        <div class="lab-item">
-                <h3>Lab 102</h3>
-                <p>Date: September 21, 2023</p>
-                <p>Free Capacity: 8</p>
-            </div>
-        </a>
-        <!-- <a href="">
-        <div class="lab-item">
-                <h3>Lab 102</h3>
-                <p>Date: September 21, 2023</p>
-                <p>Free Capacity: 8</p>
-            </div>
-        </a>
-        <a href="">
-        <div class="lab-item">
-                <h3>Lab 102</h3>
-                <p>Date: September 21, 2023</p>
-                <p>Free Capacity: 8</p>
-            </div>
-        </a>
-        <a href="">
-        <div class="lab-item">
-                <h3>Lab 102</h3>
-                <p>Date: September 21, 2023</p>
-                <p>Free Capacity: 8</p>
-            </div>
-        </a> -->
     </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    
+    function createLab({id, lab_date, close_login, close_logout, capacity, num_users, num_topics}) {
+        const anchor = document.createElement('a');
+        anchor.setAttribute("href", `${window.location.origin}/event/${id}`);
+        anchor.innerHTML = `
+            <div class="lab-item">
+                <h3>Laboratorní cvičení ${lab_date}</h3>
+                <p>Datum uzávěru přihlášení: ${close_login}</p>
+                <p>Datum uzávěru odhlášení: ${close_logout}</p>
+                <p>Počet témat: ${num_topics}</p>
+                <p>Přihlášeni: ${num_users}/${capacity}</p>
+            </div>
+        `
+        return anchor;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const container = document.querySelector(".container");
+        
+        fetch(`${window.location.origin}{% url 'api_events'%}`)
+        .then(response => response.json())
+        .then(data => data.map(item => createLab(item)))
+        .then(tags => tags.forEach(x => container.appendChild(x)))
+        .catch(e => alert(e.message))
+    })
+
+</script>
 
 {% endblock %}

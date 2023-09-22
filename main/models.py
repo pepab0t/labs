@@ -2,7 +2,12 @@ from collections.abc import Iterable
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.exceptions import ValidationError
-from django.core.validators import MinValueValidator, MaxValueValidator, EmailValidator
+from django.core.validators import (
+    MinValueValidator,
+    MaxValueValidator,
+    EmailValidator,
+)
+from .forms import cvut_email
 
 from django.utils import timezone
 
@@ -27,19 +32,33 @@ class LabTopic(models.Model):
 
 class LabEvent(models.Model):
     lab_datetime = models.DateTimeField(null=False)
-    close_login = models.DateTimeField(null=True)
-    close_logout = models.DateTimeField(null=True)
+    close_login = models.DateTimeField(null=False)
+    close_logout = models.DateTimeField(null=False)
 
     capacity = models.PositiveIntegerField(
         default=4, validators=[MinValueValidator(1), MaxValueValidator(1_000)]
     )
 
-    users = models.ManyToManyField("CustomUser", related_name="labs")
-    topics = models.ManyToManyField(LabTopic, related_name="events")
+    topics = models.ManyToManyField(LabTopic, through="LinkTopicEvent")
 
     created_by = models.ForeignKey(
-        "CustomUser", related_name="events_created", on_delete=models.CASCADE
+        "CustomUser",
+        related_name="events_created",
+        on_delete=models.SET_NULL,
+        null=True,
     )
+
+    def get_number_applied_users(self) -> int:
+        return LinkTopicEvent.objects.filter(~models.Q(user=None), event=self).count()
+
+    def get_free_topics(self):
+        return LabTopic.objects.filter(links__user=None, links__event=self).all()
+
+    def get_user_topic(self, user) -> LabTopic | None:
+        return LabTopic.objects.filter(links__user=user, links__event=self).first()
+
+    def is_full(self) -> bool:
+        return self.capacity == self.get_number_applied_users()
 
     def save(self, *args, **kwargs) -> None:
         if self.lab_datetime < timezone.now():
@@ -63,6 +82,46 @@ class LabEvent(models.Model):
             )
 
         super().save(*args, **kwargs)
+
+    @classmethod
+    def get_user_events(cls, user: "CustomUser"):
+        return (
+            cls.objects.filter(links__user=user, lab_datetime__gte=timezone.now())
+            .order_by("lab_datetime")
+            .all()
+        )
+
+    def json(self):
+        return {
+            "id": self.id,  # type: ignore
+            "lab_date": self.lab_datetime.strftime("%d.%m.%Y %H:%M"),
+            "close_login": self.close_login.strftime("%d.%m.%Y %H:%M"),
+            "close_logout": self.close_logout.strftime("%d.%m.%Y %H:%M"),
+            "capacity": self.capacity,
+            "num_topics": self.topics.count(),
+            "num_users": self.get_number_applied_users(),
+        }
+
+
+class LinkTopicEvent(models.Model):
+    event = models.ForeignKey(
+        "LabEvent", on_delete=models.CASCADE, related_name="links"
+    )
+    topic = models.ForeignKey(
+        "LabTopic", on_delete=models.CASCADE, related_name="links"
+    )
+
+    # user
+    user = models.ForeignKey(
+        "CustomUser", related_name="labs", on_delete=models.CASCADE, null=True
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["event", "topic", "user"], name="unique link"
+            )
+        ]
 
 
 class UserManager(BaseUserManager):
@@ -107,10 +166,13 @@ class CustomUser(AbstractUser):
 
     email = models.EmailField(
         unique=True,
+        validators=[cvut_email],
     )
-    fullname = models.CharField(validators=[MinValueValidator(4)], max_length=55)
 
-    # labs = models.ManyToManyField(Lab, related_name="students")
+    fullname = models.CharField(max_length=55)
+    approved = models.BooleanField(default=True)
+    cancelled = models.BooleanField(default=False)
+    # student_id = models.CharField(null=False, max_length=10)
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
