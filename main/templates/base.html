@@ -82,7 +82,7 @@
                     <p>Domů</p>
             </a>
 
-            <a href="" class="nav-item">
+            <a href="{% url 'my_labs' %}" class="nav-item">
                     <p>Přihlášené</p>
             </a>
 
@@ -92,6 +92,9 @@
             </a>
             <a href="{% url 'create_event'%}" class="nav-item">
                     <p>Vytvořit termín</p>
+            </a>
+            <a href="{% url 'approve_page' %}" class="nav-item">
+                    <p>Potvrdit registrace</p>
             </a>
             {% endif %}
         </div>

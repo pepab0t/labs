@@ -1,0 +1,49 @@
+
+
+{% extends 'base.html' %}
+
+{% load static %}
+{% load main_tags %}
+
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'apply_event.css'%}">
+{%endblock%}
+
+{% block content %}
+    <div class="radio-form">
+        <div>
+            <h3>Laboratorní cvičení {{event.lab_datetime}}</h3>
+            <p>Uzávěr přihlášení: {{event.close_login}}</p>
+            <p>Uzávěr odhlášení: {{event.close_logout}}</p>
+            <p>Přihlášeno: {{event.get_number_applied_users}}/{{event.capacity}}</p>
+            
+        </div>
+
+        {% call event 'get_user_topic' user as user_topic %}
+
+        
+
+        {% if user_topic %}
+            <p>Na tuto hodinu jste přihlášen</p>
+            <p>Téma: {{ user_topic.title }}</p>
+            <a class="submit-button" href="{% url 'logout_event' event.id %}">
+                Odlásit
+            </a>
+        {% else %}
+            {% if event.is_full %}
+                <p>Hodina je již obsazena</p>
+            {% else %}
+                {% if free_topics%}
+                    <form action="{% url 'apply_event' event.id %}" method="post">
+                        {% csrf_token %}
+                        {{form}}
+                        <button type="submit" class="submit-button">Přihlásit</button>
+                    </form>
+                {% else %}
+                    <p>Žádná volná témata</p>
+                {% endif %}
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

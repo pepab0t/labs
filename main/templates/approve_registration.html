@@ -1,0 +1,60 @@
+
+
+{% extends 'base.html' %}
+
+{% block title%}Home{% endblock%}
+
+{% load static %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'home.css'%}">
+{% endblock %}
+
+{%block content%}
+    <div class="container">
+        {% for user_ in users%}
+            <div class="lab-item">
+                <!-- <h3>Laboratorní cvičení {{event.lab_datetime}}</h3>
+                <p>Datum uzávěru přihlášení: {{event.close_login}}</p>
+                <p>Datum uzávěru odhlášení: {{event.close_logout}}</p>
+                <p>Počet témat: {{event.num_topics}}</p>
+                <p>Přihlášeni: {{event.get_number_applied_users}}/{{event.capacity}}</p> -->
+                {{user_.email}}
+                <button class="approve" data-user_id="{{user_.id}}">Potvrdit</button>
+                <button class="decline" data-user_id="{{user_.id}}">Odmítnout</button>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        
+        function approveUser(id) {
+            fetch(`${window.location.origin}/api/approve/${id}`)
+                .then(response => response.json())
+                .then(console.log)
+            location.reload();
+        }
+
+        function declineUser(id) {
+            fetch(`${window.location.origin}/api/decline/${id}`)
+            location.reload();
+        }
+
+        console.log("ello")
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".approve").forEach( button => {
+                const userId = button.dataset.user_id;
+                button.addEventListener("click", () => approveUser(userId));
+            });
+
+            document.querySelectorAll(".decline").forEach( button => {
+                const userId = button.dataset.user_id;
+                button.addEventListener("click", () => declineUser(userId));
+            })
+        })
+    </script>
+
+{% endblock %}

@@ -1,0 +1,36 @@
+
+
+.radio-form {
+    background-color: #f3f3f3;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    margin: 0 auto;
+}
+
+.radio-form label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.radio-form input[type="radio"] {
+    margin-right: 5px;
+}
+
+.submit-button {
+    background-color: #007BFF;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-decoration: none;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}

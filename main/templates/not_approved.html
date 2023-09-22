@@ -1,0 +1,23 @@
+
+{% extends 'base.html'%}
+
+{% load static %}
+
+{%block title%}
+    Stav registrace
+{% endblock %}
+
+{%block stylesheet%}
+    <link rel="stylesheet" href="{% static 'login.css' %}">
+{%endblock%}
+
+{%block content%}
+<main class="main-div">
+    <div class="login-container">
+        <h1>Stav registrace</h1>
+        <p>{{message}}</p>
+        <a href="{% url 'login' %}">Zpět</a>
+    </div>
+
+</main>
+{%endblock%}

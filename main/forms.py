@@ -1,10 +1,10 @@
 from django.core.exceptions import ValidationError
 from django import forms
-from typing import Any
+from typing import Any, Callable
 from django.utils.translation import gettext_lazy as _
 
 # from django.core.validators import MinValueValidator, MaxValueValidator, EmailValidator
-from datetime import datetime, timedelta
+from datetime import datetime
 from django.utils import timezone
 
 import re
@@ -12,7 +12,7 @@ import re
 
 def minimum_after_n_days(days: int):
     def validator(value: datetime):
-        if timezone.now() + timedelta(days=days) > value:
+        if timezone.now() + timezone.timedelta(days=days) > value:
             raise ValidationError(f"Date must be at least after {days} days from now")
 
     return validator
@@ -21,6 +21,17 @@ def minimum_after_n_days(days: int):
 def cvut_email(value: str):
     if re.search(f"^.+@fs.cvut.cz$", value) is None:
         raise ValidationError("Netolerovaná doména", code="invalid")
+
+
+def create_datetime_widget(dt_factory: Callable[[], datetime]):
+    return forms.DateTimeInput(
+        attrs={
+            "type": "datetime-local",
+            "class": "form-control",
+            "value": dt_factory().strftime("%d-%m-%Y"),
+        },
+        format="%d-%m-%Y",
+    )
 
 
 class LoginForm(forms.Form):
@@ -58,36 +69,89 @@ class CreateEventForm(forms.Form):
         validators=[minimum_after_n_days(5)],
         label="Datum a čas",
         input_formats=["%d.%m.%Y %H:%M"],
-        widget=forms.DateTimeInput(
-            attrs={"type": "datetime-local", "class": "form-control"},
-            format="%d.%m.%Y %H:%M",
+        widget=create_datetime_widget(
+            lambda: timezone.now() + timezone.timedelta(days=7)
         ),
     )
     close_login = forms.DateTimeField(
         required=True,
         label="Uzávěr přihlášení",
         input_formats=["%d.%m.%Y %H:%M"],
-        widget=forms.DateTimeInput(
-            attrs={"type": "datetime-local", "class": "form-control"},
-            format="%d.%m.%Y %H:%M",
+        widget=create_datetime_widget(
+            lambda: timezone.now() + timezone.timedelta(days=5)
         ),
     )
     close_logout = forms.DateTimeField(
         required=True,
         label="Uzávěr odhlášení",
         input_formats=["%d.%m.%Y %H:%M"],
-        widget=forms.DateTimeInput(
-            attrs={"type": "datetime-utc", "class": "form-control"},
-            format="%d.%m.%Y %H:%M",
+        widget=create_datetime_widget(
+            lambda: timezone.now() + timezone.timedelta(days=6)
         ),
     )
 
     def __init__(self, topics, *args, **kwargs):
+        kwargs.update(
+            initial={"lab_datetime": timezone.now() + timezone.timedelta(days=2)}
+        )
         super().__init__(*args, **kwargs)
         self.fields["topics"] = forms.MultipleChoiceField(
             choices=topics,
             widget=forms.CheckboxSelectMultiple,
-            label="Vyberte možnosti:",
+            label="Vyberte témata:",
             initial=[c[0] for c in topics],
             required=True,
+        )
+
+    def clean(self) -> dict[str, Any]:
+        cleaned = super().clean()
+
+        if any(
+            [
+                key not in cleaned
+                for key in (
+                    "lab_datetime",
+                    "close_logout",
+                    "close_login",
+                    "topics",
+                    "capacity",
+                )
+            ]
+        ):
+            return cleaned
+
+        if cleaned["close_logout"] >= cleaned["lab_datetime"]:
+            self.add_error(
+                "close_logout",
+                ValidationError(message="Uzávěr odhlášení musí být dříve než událost"),
+            )
+            return cleaned
+
+        if cleaned["close_logout"] <= cleaned["close_login"]:
+            self.add_error(
+                "close_login",
+                ValidationError(
+                    message="Uzávěr přihlášení musí být dříve než uzávěr odhlášení"
+                ),
+            )
+            return cleaned
+
+        if len(cleaned["topics"]) < cleaned["capacity"]:
+            self.add_error(
+                "capacity",
+                ValidationError(
+                    message="Kapacita nemůže být vyšší než počet dostupných témat"
+                ),
+            )
+            return cleaned
+
+        return cleaned
+
+
+class ApplyEventForm(forms.Form):
+    def __init__(self, choices=list(), *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.fields["topics"] = forms.ChoiceField(
+            widget=forms.RadioSelect, choices=choices, label="Témata", required=True
         )

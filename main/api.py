@@ -3,12 +3,20 @@ from django.http import HttpRequest, JsonResponse
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.db.utils import IntegrityError
-from .models import LabTopic
+from django.db.models import Count
+from django.contrib.auth.decorators import login_required
+from .models import LabTopic, LabEvent, CustomUser
 import json
+
+from django.utils import timezone
 
 
 def unauthorized():
     return JsonResponse({"message": "unauthorized"}, status=403)
+
+
+def unauthenticated():
+    return JsonResponse({"message": "unauthenticated"}, status=401)
 
 
 def staff_or_403(fn):
@@ -105,3 +113,40 @@ def modify_topic(request: HttpRequest):
 
     lab_topic.refresh_from_db()
     return JsonResponse(lab_topic.json(), status=200)
+
+
+def get_lab_events(request: HttpRequest):
+    if request.user.is_anonymous:
+        return unauthenticated()
+
+    events = (
+        LabEvent.objects.filter(lab_datetime__gt=timezone.now())
+        .annotate(num_topics=Count("topics"))
+        .filter(num_topics__gte=1)
+        .order_by("lab_datetime")
+        .all()
+    )
+
+    return JsonResponse([event.json() for event in events], status=200, safe=False)
+
+
+def approve_user(request: HttpRequest, id: int):
+    user = CustomUser.objects.get(pk=id)
+
+    if not user.approved and not user.cancelled:
+        user.approved = True
+        user.save()
+        return JsonResponse({"message": f"{user.email} approved"}, status=200)
+
+    return JsonResponse({"message": f"nothing to approve"}, status=200)
+
+
+def decline_user(request: HttpRequest, id: int):
+    user = CustomUser.objects.get(pk=id)
+
+    if not user.cancelled:
+        user.cancelled = True
+        user.save()
+        return JsonResponse({"message": f"{user.email} request cancelled"}, status=200)
+
+    return JsonResponse({"message": f"nothing to cancel"}, status=200)
