@@ -19,11 +19,11 @@
 {% block script %}
 <script>
     
-    function createLab({id, lab_date, close_login, close_logout, capacity, num_users, num_topics}) {
+    function createLab({id, lab_date, close_login, close_logout, capacity, num_users, num_topics, applied}) {
         const anchor = document.createElement('a');
         anchor.setAttribute("href", `${window.location.origin}/event/${id}`);
         anchor.innerHTML = `
-            <div class="lab-item">
+            <div class="lab-item ${applied ? 'applied-background': ''}">
                 <h3>Laboratorní cvičení ${lab_date}</h3>
                 <p>Datum uzávěru přihlášení: ${close_login}</p>
                 <p>Datum uzávěru odhlášení: ${close_logout}</p>

@@ -41,3 +41,7 @@ main
     display: block;
     width: 80%;
 }
+
+.applied-background {
+    background-color: lightgreen;
+}

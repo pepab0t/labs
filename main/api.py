@@ -127,7 +127,9 @@ def get_lab_events(request: HttpRequest):
         .all()
     )
 
-    return JsonResponse([event.json() for event in events], status=200, safe=False)
+    return JsonResponse(
+        [event.json(request.user) for event in events], status=200, safe=False
+    )
 
 
 @staff_or_403

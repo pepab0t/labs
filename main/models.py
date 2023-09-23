@@ -1,6 +1,6 @@
 from collections.abc import Iterable
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.contrib.auth.models import AbstractUser, BaseUserManager, AbstractBaseUser
 from django.core.exceptions import ValidationError
 from django.core.validators import (
     MinValueValidator,
@@ -10,6 +10,7 @@ from django.core.validators import (
 from .forms import cvut_email
 
 from django.utils import timezone
+import typing as t
 
 
 def more_than_one_word(value: str):
@@ -102,7 +103,8 @@ class LabEvent(models.Model):
             .all()
         )
 
-    def json(self):
+    def json(self, user: AbstractBaseUser):
+        applied = self.links.filter(user=user).first() is not None  # type: ignore
         return {
             "id": self.id,  # type: ignore
             "lab_date": self.lab_datetime.strftime("%d.%m.%Y %H:%M"),
@@ -111,6 +113,7 @@ class LabEvent(models.Model):
             "capacity": self.capacity,
             "num_topics": self.topics.count(),
             "num_users": self.get_number_applied_users(),
+            "applied": applied,
         }
 
 
