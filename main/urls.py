@@ -21,4 +21,9 @@ urlpatterns = [
     path("api/event/all", api.get_lab_events, name="api_events"),
     path("api/approve/<int:id>", api.approve_user, name="api_approve_user"),
     path("api/decline/<int:id>", api.decline_user, name="api_decline_user"),
+    path(
+        "api/event/<int:event_id>/user/<int:user_id>",
+        api.remove_user_from_event,
+        name="api_remove_user_from_event",
+    ),
 ]

@@ -127,6 +127,8 @@ class LinkTopicEvent(models.Model):
         "CustomUser", related_name="labs", on_delete=models.CASCADE, null=True
     )
 
+    date = models.DateTimeField(auto_now=True)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(
