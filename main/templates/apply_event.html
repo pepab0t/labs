@@ -15,35 +15,46 @@
         <div>
             <h3>Laboratorní cvičení {{event.lab_datetime}}</h3>
             <p>Uzávěr přihlášení: {{event.close_login}}</p>
+            <p style="color:red">{{login_message}}</p>
             <p>Uzávěr odhlášení: {{event.close_logout}}</p>
+            <p style="color:red">{{logout_message}}</p>
             <p>Přihlášeno: {{event.get_number_applied_users}}/{{event.capacity}}</p>
-            
         </div>
 
-        {% call event 'get_user_topic' user as user_topic %}
+        {% if form %} <!-- form is none if user is staff -->
+            {% call event 'get_user_topic' user as user_topic %}
 
-        
-
-        {% if user_topic %}
-            <p>Na tuto hodinu jste přihlášen</p>
-            <p>Téma: {{ user_topic.title }}</p>
-            <a class="submit-button" href="{% url 'logout_event' event.id %}">
-                Odlásit
-            </a>
-        {% else %}
-            {% if event.is_full %}
-                <p>Hodina je již obsazena</p>
+            {% if user_topic %}
+                <p>Na tuto hodinu jste přihlášen</p>
+                <p>Téma: {{ user_topic.title }}</p>
+                <form action="{% url 'apply_event' event.id %}?operation=logout" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="submit-button">Odhlásit</button>
+                </form>
             {% else %}
-                {% if free_topics%}
-                    <form action="{% url 'apply_event' event.id %}" method="post">
-                        {% csrf_token %}
-                        {{form}}
-                        <button type="submit" class="submit-button">Přihlásit</button>
-                    </form>
+                {% if event.is_full %}
+                    <p>Hodina je již obsazena</p>
                 {% else %}
-                    <p>Žádná volná témata</p>
+                    {% if any_free_topics%}
+                        <form action="{% url 'apply_event' event.id %}?operation=apply" method="post">
+                            {% csrf_token %}
+                            {{form}}
+                            <button type="submit" class="submit-button">Přihlásit</button>
+                        </form>
+                    {% else %}
+                        <p>Žádná volná témata</p>
+                    {% endif %}
                 {% endif %}
             {% endif %}
+        {% else %} <!-- if user is staff do this -->
+
+        <p>Přihlášení:</p>
+        <ul>
+            {% for applied_user in event.get_applied_users %}
+                {% call applied_user 'get_link_for_event' event as link %}
+                <ul>{{applied_user}}, {{ link.topic.title }}</ul>
+            {% endfor %}
+        </ul>
         {% endif %}
     </div>
 {% endblock %}
