@@ -5,6 +5,7 @@
 {% block title%}Home{% endblock%}
 
 {% load static %}
+{% load main_tags %}
 
 {% block stylesheet %}
 <link rel="stylesheet" href="{% static 'home.css'%}">
@@ -14,9 +15,9 @@
     <div class="container">
         {% for event in events%}
             <div class="lab-item">
-                <h3>Laboratorní cvičení {{event.lab_datetime}}</h3>
-                <p>Datum uzávěru přihlášení: {{event.close_login}}</p>
-                <p>Datum uzávěru odhlášení: {{event.close_logout}}</p>
+                <h3>Laboratorní cvičení {{event.lab_datetime|date_string}}</h3>
+                <p>Datum uzávěru přihlášení: {{event.close_login|date_string}}</p>
+                <p>Datum uzávěru odhlášení: {{event.close_logout|date_string}}</p>
                 <p>Počet témat: {{event.num_topics}}</p>
                 <p>Přihlášeni: {{event.get_number_applied_users}}/{{event.capacity}}</p>
             </div>

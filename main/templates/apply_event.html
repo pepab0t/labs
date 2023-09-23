@@ -13,10 +13,10 @@
 {% block content %}
     <div class="radio-form">
         <div>
-            <h3>Laboratorní cvičení {{event.lab_datetime}}</h3>
-            <p>Uzávěr přihlášení: {{event.close_login}}</p>
+            <h3>Laboratorní cvičení {{event.lab_datetime|date_string}}</h3>
+            <p>Uzávěr přihlášení: {{event.close_login|date_string}}</p>
             <p style="color:red">{{login_message}}</p>
-            <p>Uzávěr odhlášení: {{event.close_logout}}</p>
+            <p>Uzávěr odhlášení: {{event.close_logout|date_string}}</p>
             <p style="color:red">{{logout_message}}</p>
             <p>Přihlášeno: {{event.get_number_applied_users}}/{{event.capacity}}</p>
         </div>
@@ -52,9 +52,35 @@
         <ul>
             {% for applied_user in event.get_applied_users %}
                 {% call applied_user 'get_link_for_event' event as link %}
-                <ul>{{applied_user}}, {{ link.topic.title }}</ul>
+                <ul>{{applied_user}}, {{ link.topic.title }} 
+                    <button class="btn-remove-user" data-user_id="{{applied_user.id}}" data-event_id="{{event.id}}">
+                        Odhlásit
+                    </button>
+                </ul>
             {% endfor %}
         </ul>
         {% endif %}
     </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll(".btn-remove-user").forEach((btn) => {
+                const eventId = btn.dataset.event_id;
+                const userId = btn.dataset.user_id;
+                btn.onclick = () =>  {
+                    fetch(`${window.location.origin}/api/event/${eventId}/user/${userId}`)
+                        .then(async response => {
+                            if (response.status >= 200 && response.status < 400) {
+                                location.reload();
+                            } else {
+                                const json = await response.json();
+                                alert(json.message);
+                            }
+                        })
+                }
+            })
+        })
+    </script>
 {% endblock %}

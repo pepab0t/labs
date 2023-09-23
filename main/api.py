@@ -130,6 +130,7 @@ def get_lab_events(request: HttpRequest):
     return JsonResponse([event.json() for event in events], status=200, safe=False)
 
 
+@staff_or_403
 def approve_user(request: HttpRequest, id: int):
     user = CustomUser.objects.get(pk=id)
 
@@ -141,6 +142,7 @@ def approve_user(request: HttpRequest, id: int):
     return JsonResponse({"message": f"nothing to approve"}, status=200)
 
 
+@staff_or_403
 def decline_user(request: HttpRequest, id: int):
     user = CustomUser.objects.get(pk=id)
 
@@ -150,3 +152,27 @@ def decline_user(request: HttpRequest, id: int):
         return JsonResponse({"message": f"{user.email} request cancelled"}, status=200)
 
     return JsonResponse({"message": f"nothing to cancel"}, status=200)
+
+
+@staff_or_403
+def remove_user_from_event(request: HttpRequest, event_id: int, user_id: int):
+    try:
+        user = CustomUser.objects.get(pk=user_id)
+    except CustomUser.DoesNotExist:
+        return JsonResponse({"message": f"User `{user_id}` not found"}, status=404)
+
+    try:
+        event = LabEvent.objects.get(pk=event_id)
+    except LabEvent.DoesNotExist:
+        return JsonResponse({"message": f"Event `{user_id}` not found"}, status=404)
+
+    if (link := event.links.filter(user=user).first()) is None:
+        return JsonResponse(
+            {"message": f"User `{user_id}` is not applied for event `{user_id}`"},
+            status=400,
+        )
+
+    link.user = None
+    link.save()
+
+    return JsonResponse({}, status=204)
