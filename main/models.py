@@ -48,11 +48,22 @@ class LabEvent(models.Model):
         null=True,
     )
 
+    def _get_applied_users_query(self):
+        # return LinkTopicEvent.objects.filter(~models.Q(user=None), event=self)
+
+        return CustomUser.objects.filter(labs__event=self)
+
+    def get_applied_users(self):
+        return self._get_applied_users_query().all()
+
     def get_number_applied_users(self) -> int:
-        return LinkTopicEvent.objects.filter(~models.Q(user=None), event=self).count()
+        return self._get_applied_users_query().count()
 
     def get_free_topics(self):
         return LabTopic.objects.filter(links__user=None, links__event=self).all()
+
+    def get_free_topics_radios(self) -> list[tuple[int, str]]:
+        return [(topic.id, topic.title) for topic in self.get_free_topics()]  # type: ignore
 
     def get_user_topic(self, user) -> LabTopic | None:
         return LabTopic.objects.filter(links__user=user, links__event=self).first()
@@ -180,3 +191,6 @@ class CustomUser(AbstractUser):
 
     def json(self):
         return {"fullname": self.fullname, "email": self.email}
+
+    def get_link_for_event(self, event: LabEvent):
+        return self.labs.filter(event=event).first()

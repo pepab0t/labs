@@ -127,14 +127,14 @@ class CreateEventForm(forms.Form):
             )
             return cleaned
 
-        if cleaned["close_logout"] <= cleaned["close_login"]:
-            self.add_error(
-                "close_login",
-                ValidationError(
-                    message="Uzávěr přihlášení musí být dříve než uzávěr odhlášení"
-                ),
-            )
-            return cleaned
+        # if cleaned["close_logout"] <= cleaned["close_login"]:
+        #     self.add_error(
+        #         "close_login",
+        #         ValidationError(
+        #             message="Uzávěr přihlášení musí být dříve než uzávěr odhlášení"
+        #         ),
+        #     )
+        #     return cleaned
 
         if len(cleaned["topics"]) < cleaned["capacity"]:
             self.add_error(
@@ -155,3 +155,7 @@ class ApplyEventForm(forms.Form):
         self.fields["topics"] = forms.ChoiceField(
             widget=forms.RadioSelect, choices=choices, label="Témata", required=True
         )
+
+    @property
+    def choices(self):
+        return self.fields["topics"].choices

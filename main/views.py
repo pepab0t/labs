@@ -209,81 +209,105 @@ def create_event(request: HttpRequest):
     return render(request, "create_event.html", {"form": form})
 
 
-@login_required
-def apply_to_event(request: HttpRequest, id: int):
-    event = LabEvent.objects.get(pk=id)
-    free_topics = event.get_free_topics()
-
-    if not free_topics:
+def render_event_page(
+    request: HttpRequest,
+    event: LabEvent,
+    form: ApplyEventForm | None = None,
+    login_message: str = "",
+    logout_message: str = "",
+):
+    if request.user.is_staff:  # type: ignore
         return render(
             request,
             "apply_event.html",
-            {"event": event, "form": ApplyEventForm(), "free_topics": free_topics},
+            {"event": event},
         )
-
-    if request.method == "POST":
-        form = ApplyEventForm(
-            [(topic.id, topic.title) for topic in free_topics],  # type: ignore
-            request.POST,
-            initial={"topics": free_topics[0].id},  # type: ignore
-        )
-
-        if event.capacity <= event.get_number_applied_users():
-            return render(
-                request,
-                "apply_event.html",
-                {"event": event, "form": form, "free_topics": free_topics},
-            )
-
-        if form.is_valid():
-            topic_id = int(form.cleaned_data["topics"])
-            topic = LabTopic.objects.get(pk=topic_id)
-
-            link = LinkTopicEvent.objects.filter(event=event, topic=topic).first()
-
-            if link.user is None:
-                link.user = request.user
-                link.save()
-
-                return redirect("apply_event", id=id)  # type: ignore
-
-            return render(
-                request,
-                "apply_event.html",
-                {"event": event, "form": form, "free_topics": free_topics},
-            )
-
-    else:
-        form = ApplyEventForm(
-            [(topic.id, topic.title) for topic in free_topics],  # type: ignore
-            initial={"topics": free_topics[0].id},  # type: ignore
-        )
-
-    print(event.get_user_topic(request.user))
 
     return render(
         request,
         "apply_event.html",
-        {"event": event, "form": form, "free_topics": free_topics},
+        {
+            "event": event,
+            "form": form,
+            "any_free_topics": form is not None and len(form.choices) != 0,
+            "logout_message": logout_message,
+            "login_message": login_message,
+        },
     )
 
 
-@login_required
-def logout_event(request: HttpRequest, id: int):
-    event = LabEvent.objects.get(pk=id)
+def apply_event(request: HttpRequest, event: LabEvent, form: ApplyEventForm):
+    if event.close_login < timezone.now():
+        return render_event_page(
+            request, event, form, login_message="Čas na přihlášení vypršel"
+        )
+
+    if event.capacity <= event.get_number_applied_users():
+        return render_event_page(request, event, form)
+
+    if form.is_valid():
+        topic_id = int(form.cleaned_data["topics"])
+        topic = LabTopic.objects.get(pk=topic_id)
+
+        link = LinkTopicEvent.objects.filter(event=event, topic=topic).first()
+
+        if link.user is None:
+            link.user = request.user
+            link.save()
+            return redirect("apply_event", id=event.id)  # type: ignore
+
+    return render_event_page(request, event, form)
+
+
+def logout_event(request: HttpRequest, event: LabEvent, form: ApplyEventForm):
+    if event.close_logout < timezone.now():
+        return render_event_page(
+            request, event, form, logout_message="Čas na odhlášení vypršel"
+        )
+
     topic = event.get_user_topic(request.user)
 
     link = LinkTopicEvent.objects.filter(
         user=request.user, event=event, topic=topic
     ).first()
 
-    if link is None:
-        return redirect("apply_event", id=id)
+    if link is not None:
+        link.user = None
+        link.save()
 
-    link.user = None
-    link.save()
+    return redirect("apply_event", id=event.id)  # type: ignore
 
-    return redirect("apply_event", id=id)
+
+@login_required
+def event_page(request: HttpRequest, id: int):
+    event = LabEvent.objects.get(pk=id)
+    free_topics = event.get_free_topics_radios()
+
+    if not free_topics:
+        return render_event_page(request, event)
+
+    form = ApplyEventForm(
+        free_topics,  # type: ignore
+        request.POST or None,
+        initial={"topics": free_topics[0][0]},  # type: ignore
+    )
+
+    if request.method == "POST":
+        if request.user.is_staff:  # type: ignore
+            return render_event_page(request, event, form)
+
+        if (operation := request.GET.get("operation")) is None:
+            raise Exception("missing parameter `operation`")
+
+        match operation:
+            case "apply":
+                return apply_event(request, event, form)
+            case "logout":
+                return logout_event(request, event, form)
+            case _:
+                raise Exception("unsupported value for `operation`")
+
+    return render_event_page(request, event, form)
 
 
 @login_required
