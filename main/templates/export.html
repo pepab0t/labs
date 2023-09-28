@@ -1,0 +1,20 @@
+
+{% extends 'base.html'%}
+
+{% load static %}
+
+{%block title%}
+    {{title}}
+{% endblock %}
+
+{%block stylesheet%}
+    <link rel="stylesheet" href="{% static 'home.css' %}">
+{%endblock%}
+
+{%block content%}
+    <div class="container">
+        <h1>Export</h1>
+        <a href="{% url 'api_export_closed'%}">Následující hodiny s uzavřeným odhlášením</a>
+        <a href="{% url 'api_export_history'%}">Historie</a>
+    </div>
+{%endblock%}

@@ -1,13 +1,14 @@
 from django import template
 import typing as t
 from datetime import datetime
+from ..utils import repr_format
 
 register = template.Library()
 
 
 @register.filter
 def date_string(value: datetime):
-    return value.strftime(r"%d.%m.%Y %H:%M")
+    return repr_format(value)
 
 
 @register.simple_tag
