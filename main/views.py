@@ -327,3 +327,11 @@ def approve_registration_page(request: HttpRequest):
 @staff_member_required(redirect_field_name="home")
 def export_page(request: HttpRequest):
     return render(request, "export.html")
+
+
+@staff_member_required(redirect_field_name="home")
+def delete_event(request: HttpRequest, event_id: int):
+    event = LabEvent.objects.get(pk=event_id)
+    event.delete()
+
+    return redirect("home")

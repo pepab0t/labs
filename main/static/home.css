@@ -1,47 +1,24 @@
+@import url("./variables.css");
 
-.container {
-    flex-grow: 1;
-
-    max-width: 600px;
-    width: 100%;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #fff;
-    padding: 20px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+h2 {
+    color: var(--dark-grey);
 }
 
-.lab-item {
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    padding: 10px;
-    border-radius: 5px;
-    transition: transform 0.2s;
-}
-
-.lab-item:hover {
-    transform: scale(1.02);
-}
-main
-.lab-item h3 {
-    margin: 0;
-    font-size: 20px;
-}
-
-.lab-item p {
-    margin: 0;
-    color: #555;
-}
 
 .container a {
     text-decoration: none;
-    color: inherit;
+    /* color: inherit; */
     display: block;
     width: 80%;
+    max-width: 800px;
 }
 
 .applied-background {
-    background-color: lightgreen;
+    background-color: rgb(193, 228, 248);
+}
+
+.lab-item-wrap {
+    display: flex;
+    gap: 15%;
+    /* justify-content: space-between; */
 }

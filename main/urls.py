@@ -12,6 +12,7 @@ urlpatterns = [
     path("topics/", views.show_topics, name="topics"),
     path("event/create", views.create_event, name="create_event"),
     path("event/<int:id>", views.event_page, name="apply_event"),
+    path("event/delete/<int:event_id>", views.delete_event, name="delete_event"),
     path("approve/", views.approve_registration_page, name="approve_page"),
     path("my_labs/", views.my_labs, name="my_labs"),
     path("export/", views.export_page, name="export"),

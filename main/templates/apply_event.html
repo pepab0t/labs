@@ -20,6 +20,9 @@
             <p style="color:red">{{logout_message}}</p>
             <p>Přihlášeno: {{event.get_number_applied_users}}/{{event.capacity}}</p>
         </div>
+        {% if user.is_staff %}
+            <a href="{% url 'delete_event' event.id %}">Zrušit hodinu</a>
+        {% endif %}
 
         {% if form %} <!-- form is none if user is staff -->
             {% call event 'get_user_topic' user as user_topic %}
