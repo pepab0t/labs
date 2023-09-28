@@ -1,14 +1,18 @@
 from functools import wraps
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.core.exceptions import ValidationError
+from django.core.paginator import Paginator, EmptyPage
 from django.shortcuts import get_object_or_404
 from django.db.utils import IntegrityError
 from django.db.models import Count
 from django.contrib.auth.decorators import login_required
-from .models import LabTopic, LabEvent, CustomUser
+from .models import LabTopic, LabEvent, CustomUser, LinkTopicEvent
 import json
+from io import StringIO
 
 from django.utils import timezone
+
+EVENTS_PER_PAGE: int = 5
 
 
 def unauthorized():
@@ -116,19 +120,34 @@ def modify_topic(request: HttpRequest):
 
 
 def get_lab_events(request: HttpRequest):
+    """page param starting from 1"""
     if request.user.is_anonymous:
         return unauthenticated()
 
+    page = request.GET.get("page")
+    if page is None or not page.isdigit():
+        return JsonResponse({"message": "missing parameter `page` (int)"}, status=400)
+    page_int: int = int(page)
+    if page_int < 0:
+        return JsonResponse({"message": "page must be greater or equal 1"}, status=400)
+
     events = (
         LabEvent.objects.filter(lab_datetime__gt=timezone.now())
+        .filter(lab_datetime__gte=timezone.now())
         .annotate(num_topics=Count("topics"))
         .filter(num_topics__gte=1)
         .order_by("lab_datetime")
-        .all()
+        .all()  # [EVENTS_PER_PAGE * (page_int - 1) : EVENTS_PER_PAGE * page_int]
     )
 
+    paginator = Paginator(events, EVENTS_PER_PAGE)
+    try:
+        page = paginator.page(page_int)
+    except EmptyPage:
+        return JsonResponse({"message": "no more pages"})
+
     return JsonResponse(
-        [event.json(request.user) for event in events], status=200, safe=False
+        {"content": [event.json(request.user) for event in page], "has_next": page.has_next()}, status=200, safe=False  # type: ignore
     )
 
 
@@ -178,3 +197,33 @@ def remove_user_from_event(request: HttpRequest, event_id: int, user_id: int):
     link.save()
 
     return JsonResponse({}, status=204)
+
+
+@staff_or_403
+def export_closed(request: HttpRequest):
+    now = timezone.now()
+    links = (
+        LinkTopicEvent.objects.filter(event__lab_datetime__gte=now)
+        .filter(event__close_logout__lte=now)
+        .all()
+    )
+
+    content: str = LinkTopicEvent.links_to_csv(links)
+
+    response = HttpResponse(content, content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="closed_labs.csv"'
+
+    return response
+
+
+@staff_or_403
+def export_history(request: HttpRequest):
+    now = timezone.now()
+
+    links = LinkTopicEvent.objects.filter(event__lab_datetime__lte=now).all()
+
+    content: str = LinkTopicEvent.links_to_csv(links)
+    response = HttpResponse(content, content_type="text/csv")
+    response["Content-Disposition"] = 'attachment; filename="history_labs.csv"'
+
+    return response

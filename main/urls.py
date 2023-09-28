@@ -14,6 +14,7 @@ urlpatterns = [
     path("event/<int:id>", views.event_page, name="apply_event"),
     path("approve/", views.approve_registration_page, name="approve_page"),
     path("my_labs/", views.my_labs, name="my_labs"),
+    path("export/", views.export_page, name="export"),
     path("api/topic/all", api.all_topics, name="api_topics"),
     path("api/topic/create", api.new_topic, name="api_new_topic"),
     path("api/topic/delete", api.remove_topic, name="api_remove_topic"),
@@ -26,4 +27,6 @@ urlpatterns = [
         api.remove_user_from_event,
         name="api_remove_user_from_event",
     ),
+    path("api/export/closed", api.export_closed, name="api_export_closed"),
+    path("api/export/history", api.export_history, name="api_export_history"),
 ]

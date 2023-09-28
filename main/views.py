@@ -23,7 +23,7 @@ def create_users(request: HttpRequest):
     for i in range(1, 15):
         CustomUser.objects.create_user(  # type: ignore
             email=f"foo{i}@fs.cvut.cz",
-            fullname="Foo baz",
+            fullname="Foo Baz",
             password="1111",
             approved=False,
         )
@@ -284,7 +284,7 @@ def event_page(request: HttpRequest, id: int):
     free_topics = event.get_free_topics_radios()
 
     if not free_topics:
-        return render_event_page(request, event)
+        return render_event_page(request, event, form=ApplyEventForm())
 
     form = ApplyEventForm(
         free_topics,  # type: ignore
@@ -322,3 +322,8 @@ def approve_registration_page(request: HttpRequest):
         "date_joined"
     )[:10]
     return render(request, "approve_registration.html", {"users": users})
+
+
+@staff_member_required(redirect_field_name="home")
+def export_page(request: HttpRequest):
+    return render(request, "export.html")

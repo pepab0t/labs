@@ -11,6 +11,7 @@ from .forms import cvut_email
 
 from django.utils import timezone
 import typing as t
+from .utils import repr_format, official_format
 
 
 def more_than_one_word(value: str):
@@ -73,8 +74,8 @@ class LabEvent(models.Model):
         return self.capacity == self.get_number_applied_users()
 
     def save(self, *args, **kwargs) -> None:
-        if self.lab_datetime < timezone.now():
-            raise ValidationError("Date of Lab cannot be in the past", code="invalid")
+        # if self.lab_datetime < timezone.now():
+        #     raise ValidationError("Date of Lab cannot be in the past", code="invalid")
 
         if self.close_login is None:
             raise ValidationError("Close login date must be specified", code="invalid")
@@ -107,9 +108,9 @@ class LabEvent(models.Model):
         applied = self.links.filter(user=user).first() is not None  # type: ignore
         return {
             "id": self.id,  # type: ignore
-            "lab_date": self.lab_datetime.strftime("%d.%m.%Y %H:%M"),
-            "close_login": self.close_login.strftime("%d.%m.%Y %H:%M"),
-            "close_logout": self.close_logout.strftime("%d.%m.%Y %H:%M"),
+            "lab_date": repr_format(self.lab_datetime),
+            "close_login": repr_format(self.close_login),
+            "close_logout": repr_format(self.close_logout),
             "capacity": self.capacity,
             "num_topics": self.topics.count(),
             "num_users": self.get_number_applied_users(),
@@ -138,6 +139,28 @@ class LinkTopicEvent(models.Model):
                 fields=["event", "topic", "user"], name="unique link"
             )
         ]
+
+    @staticmethod
+    def get_csv_header() -> str:
+        return "datum a čas hodiny;uzávěr přihlášení;uzávěr odhlášení;téma;jméno studenta;email studenta"
+
+    def to_csv_line(self) -> str:
+        if self.user:
+            fullname = self.user.fullname
+            email = self.user.email
+        else:
+            fullname = ""
+            email = ""
+
+        return f"{official_format(self.event.lab_datetime)};{official_format(self.event.close_login)};{official_format(self.event.close_logout)};{self.topic.title};{fullname};{email}"
+
+    @staticmethod
+    def links_to_csv(links: t.Iterable["LinkTopicEvent"]) -> str:
+        return (
+            LinkTopicEvent.get_csv_header()
+            + "\n"
+            + "\n".join(map(lambda l: l.to_csv_line(), links))
+        )
 
 
 class UserManager(BaseUserManager):
@@ -198,4 +221,4 @@ class CustomUser(AbstractUser):
         return {"fullname": self.fullname, "email": self.email}
 
     def get_link_for_event(self, event: LabEvent):
-        return self.labs.filter(event=event).first()
+        return self.labs.filter(event=event).first()  # type: ignore
