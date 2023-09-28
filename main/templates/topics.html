@@ -9,15 +9,17 @@
 
 {% block content %}
     <div class="container">
-        <div class="topic-item">
-            <div class="topic-container">
-                <textarea name="" id="ta-new" cols="30" rows="10"></textarea>
+        <div class="inner">
+            <h3>Nové téma:</h3>
+            <div class="topic-item topic-item--first">
+                <div class="topic-container">
+                    <input type="text" id="input-new">
+                </div>
+                <a id="add-new" style="width: 120px;">Nové téma</a>
             </div>
-            <a id="add-new" style="width: 120px;">Nové téma</a>
+            <h3>Existující témata:</h3>
+    
         </div>
-
-        <div class="vl"></div>
-
     </div>
 {%endblock%}
 
@@ -118,7 +120,7 @@
     }
 
     document.addEventListener("DOMContentLoaded", () => {
-        const container = document.querySelector(".container");
+        const container = document.querySelector(".inner");
 
 
         // load existing topics
@@ -131,7 +133,7 @@
             })
         
         // new section
-        const textarea = document.getElementById("ta-new");
+        const textarea = document.getElementById("input-new");
         const anchorNew = document.getElementById("add-new");
         anchorNew.onclick = () => {
             fetch(`${window.location.origin}{% url 'api_new_topic'%}`, 
