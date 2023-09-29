@@ -83,11 +83,11 @@
         const buttonContainer = document.getElementById(`buttons-${id}`);
         const originalText = contentContainer.querySelector("h3").textContent;
 
-        const textarea = document.createElement('textarea');
-        textarea.textContent = originalText;
+        const input = document.createElement('input');
+        input.value = originalText;
 
         contentContainer.innerHTML = "";
-        contentContainer.appendChild(textarea);
+        contentContainer.appendChild(input);
 
         buttonContainer.innerHTML = "";
 
@@ -102,7 +102,7 @@
                     'Content-Type': 'application/json',
                     "X-CSRFToken": getCookie("csrftoken")
                 },
-                body: JSON.stringify({id: id, topic: textarea.value})
+                body: JSON.stringify({id: id, topic: input.value})
 
             })
             .then(response => response.json())
@@ -133,7 +133,7 @@
             })
         
         // new section
-        const textarea = document.getElementById("input-new");
+        const inputNew = document.getElementById("input-new");
         const anchorNew = document.getElementById("add-new");
         anchorNew.onclick = () => {
             fetch(`${window.location.origin}{% url 'api_new_topic'%}`, 
@@ -145,14 +145,14 @@
                     "X-CSRFToken": getCookie("csrftoken")
                 },
                 body: JSON.stringify({
-                    topic: textarea.value,
+                    topic: inputNew.value,
                 })
             })
             .then(async response => {
                 if (response.status >= 200 && response.status <= 399) {
                     const item = createItem(await response.json());
                     container.appendChild(item);
-                    textarea.value = "";
+                    inputNew.value = "";
                 } else {
                     let json = await response.json()
                     throw new Error(json.message);

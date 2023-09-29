@@ -8,11 +8,11 @@ from django.db.models import Count
 from django.contrib.auth.decorators import login_required
 from .models import LabTopic, LabEvent, CustomUser, LinkTopicEvent
 import json
-from io import StringIO
 
 from django.utils import timezone
 
 EVENTS_PER_PAGE: int = 5
+REQUESTS_PER_PAGE: int = 10
 
 
 def unauthorized():
@@ -187,7 +187,7 @@ def remove_user_from_event(request: HttpRequest, event_id: int, user_id: int):
     except LabEvent.DoesNotExist:
         return JsonResponse({"message": f"Event `{user_id}` not found"}, status=404)
 
-    if (link := event.links.filter(user=user).first()) is None:
+    if (link := event.links.filter(user=user).first()) is None:  # type: ignore
         return JsonResponse(
             {"message": f"User `{user_id}` is not applied for event `{user_id}`"},
             status=400,
@@ -227,3 +227,32 @@ def export_history(request: HttpRequest):
     response["Content-Disposition"] = 'attachment; filename="history_labs.csv"'
 
     return response
+
+
+@staff_or_403
+def get_reqister_requests(request: HttpRequest) -> HttpResponse:
+    page: str | None = request.GET.get("page")
+
+    if page is None:
+        return JsonResponse({"message": "missing parameter `page` (int)"}, status=400)
+
+    requests = (
+        CustomUser.objects.filter(approved=False, cancelled=False)
+        .order_by("date_joined")
+        .all()
+    )
+
+    paginator = Paginator(requests, REQUESTS_PER_PAGE)
+
+    try:
+        p = paginator.page(page)
+    except EmptyPage as e:
+        return JsonResponse({"message": str(e)}, status=400)
+
+    return JsonResponse(
+        {
+            "content": list(map(lambda u: u.json(), p.__iter__())),
+            "has_next": p.has_next(),
+        },
+        safe=False,
+    )
