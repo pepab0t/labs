@@ -41,13 +41,13 @@
         const createUserOperation = (operation) => {
             return (id, removeElementFn) => {
                 fetch(`${window.location.origin}/api/${operation}/${id}`)
-                    .then(response => {
-                        if (response.status >= 200 && response.status < 400){
-                            removeElementFn();
-                        }
-                        return response.json()
-                    })
-                    .then(console.log)
+                .then(response => {
+                    if (response.status >= 200 && response.status < 400){
+                        removeElementFn();
+                    }
+                    return response.json()
+                })
+                .then(console.log)
                 // location.reload();
             }
          }
@@ -80,7 +80,16 @@
                 </div>
                 `
                 
-                const removeElementFn = () => document.getElementById(`li-${id}`).remove();
+                const removeElementFn = () => {
+                    const target = document.getElementById(`li-${id}`);
+                    // target.remove();
+                    const anim = target.animate({opacity: [1, 0]}, {duration: 300, iterations: 1, easing: "ease-in"})
+                    anim.onfinish = (e) => {
+                        target.remove();
+                        loadUntilScroll();
+                    };
+                    // target.style.animation = "disapear 1s forwards";
+                };
 
                 labItem.querySelector(".approve").onclick = () => approveUser(id, removeElementFn);
                 labItem.querySelector(".decline").onclick = () => declineUser(id, removeElementFn);
@@ -104,8 +113,10 @@
                 .catch(e => console.log(e));
             }
 
-            while (window.innerHeight >= document.body.offsetHeight && hasNext){
-                await load()
+            async function loadUntilScroll(){
+                while (window.innerHeight >= document.body.offsetHeight && hasNext){
+                    await load()
+                }
             }
 
             window.onscroll = async () => {
@@ -113,6 +124,8 @@
                     await load();
                 }
             }
+
+            loadUntilScroll();
         })
 
     </script>

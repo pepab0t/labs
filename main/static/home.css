@@ -37,3 +37,19 @@ h2 {
     display: flex;
     align-items: center;
 }
+
+@keyframes disapear {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+h3 span {
+    margin-left: 10px;
+    color: #007BFF;
+    font-size: 24px;
+}

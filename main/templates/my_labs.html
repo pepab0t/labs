@@ -16,12 +16,25 @@
         <h2>Přihlášené hodiny</h2>
         {% for event in events%}
             <a href="{% url 'apply_event' event.id %}">
-                <div class="lab-item applied-background">
+                <!-- <div class="lab-item applied-background">
                     <h3>Laboratorní cvičení {{event.lab_datetime|date_string}}</h3>
                     <p>Datum uzávěru přihlášení: {{event.close_login|date_string}}</p>
                     <p>Datum uzávěru odhlášení: {{event.close_logout|date_string}}</p>
                     <p>Počet témat: {{event.topics.count}}</p>
                     <p>Přihlášeni: {{event.get_number_applied_users}}/{{event.capacity}}</p>
+                </div> -->
+                <div class="lab-item applied-background">
+                    <h3>Laboratorní cvičení <span>{{event.lab_datetime|date_string}}</span></h3>
+                    <div class="lab-item-wrap lab-item-wrap--home">
+                        <div>
+                            <p>Datum uzávěru přihlášení: {{event.close_login|date_string}}</p>
+                            <p>Datum uzávěru odhlášení: {{event.close_logout|date_string}}</p>
+                        </div>
+                        <div>
+                            <p>Počet témat: {{event.topics.count}}</p>
+                            <p>Přihlášeni: {{event.get_number_applied_users}}/{{event.capacity}}</p>
+                        </div>
+                    </div>
                 </div>
             </a>
         {% endfor %}
