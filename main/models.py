@@ -218,7 +218,12 @@ class CustomUser(AbstractUser):
     objects = UserManager()
 
     def json(self):
-        return {"fullname": self.fullname, "email": self.email}
+        return {
+            "id": self.id,
+            "fullname": self.fullname,
+            "email": self.email,
+            "date_joined": repr_format(self.date_joined),
+        }
 
     def get_link_for_event(self, event: LabEvent):
         return self.labs.filter(event=event).first()  # type: ignore

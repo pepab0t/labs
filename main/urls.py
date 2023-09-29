@@ -30,4 +30,5 @@ urlpatterns = [
     ),
     path("api/export/closed", api.export_closed, name="api_export_closed"),
     path("api/export/history", api.export_history, name="api_export_history"),
+    path("api/requests/", api.get_reqister_requests, name="api_register_requests"),
 ]

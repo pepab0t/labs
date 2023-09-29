@@ -6,55 +6,115 @@
 
 {% load static %}
 
+{% load main_tags %}
+
 {% block stylesheet %}
 <link rel="stylesheet" href="{% static 'home.css'%}">
 {% endblock %}
 
 {%block content%}
     <div class="container">
-        {% for user_ in users%}
-            <div class="lab-item">
-                <!-- <h3>Laboratorní cvičení {{event.lab_datetime}}</h3>
-                <p>Datum uzávěru přihlášení: {{event.close_login}}</p>
-                <p>Datum uzávěru odhlášení: {{event.close_logout}}</p>
-                <p>Počet témat: {{event.num_topics}}</p>
-                <p>Přihlášeni: {{event.get_number_applied_users}}/{{event.capacity}}</p> -->
-                {{user_.email}}
-                <button class="approve" data-user_id="{{user_.id}}">Potvrdit</button>
-                <button class="decline" data-user_id="{{user_.id}}">Odmítnout</button>
-            </div>
-        {% endfor %}
+        <h2>Žádosti o registraci</h2>
+        <div class="inner">
+            {% for user_ in users%}
+                <!-- <div class="lab-item">
+                    <div class="lab-item-wrap lab-item-wrap--reg">
+                        <div>
+                            <h4>{{user_.email}}</h4>
+                            <p>{{user_.fullname}}</p>
+                            <p>Datum registrace: {{user_.date_joined|date_string}}</p>
+                        </div>
+                        <div class="lab-item-buttons">
+                            <button class="approve" data-user_id="{{user_.id}}">Potvrdit</button>
+                            <button class="decline" data-user_id="{{user_.id}}">Odmítnout</button>
+                        </div>
+                    </div>
+                </div> -->
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
 
 {% block script %}
     <script>
         
-        function approveUser(id) {
-            fetch(`${window.location.origin}/api/approve/${id}`)
-                .then(response => response.json())
-                .then(console.log)
-            location.reload();
-        }
+        const createUserOperation = (operation) => {
+            return (id, removeElementFn) => {
+                fetch(`${window.location.origin}/api/${operation}/${id}`)
+                    .then(response => {
+                        if (response.status >= 200 && response.status < 400){
+                            removeElementFn();
+                        }
+                        return response.json()
+                    })
+                    .then(console.log)
+                // location.reload();
+            }
+         }
 
-        function declineUser(id) {
-            fetch(`${window.location.origin}/api/decline/${id}`)
-            location.reload();
-        }
+        const declineUser = createUserOperation('decline');
+        const approveUser = createUserOperation('approve');
 
-        console.log("ello")
+        var page = 1;
+        var hasNext = true;
 
-        document.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll(".approve").forEach( button => {
-                const userId = button.dataset.user_id;
-                button.addEventListener("click", () => approveUser(userId));
-            });
+        document.addEventListener("DOMContentLoaded", async () => {
+            const container = document.querySelector(".inner");
 
-            document.querySelectorAll(".decline").forEach( button => {
-                const userId = button.dataset.user_id;
-                button.addEventListener("click", () => declineUser(userId));
-            })
+            function render_item({id, fullname, email, date_joined}){
+                const labItem = document.createElement("div");
+                labItem.classList.add("lab-item");
+                labItem.setAttribute("id", `li-${id}`)
+
+                labItem.innerHTML = `
+                <div class="lab-item-wrap lab-item-wrap--reg">
+                    <div>
+                        <h4>${email}</h4>
+                        <p>${fullname}</p>
+                        <p>Datum registrace: ${date_joined}</p>
+                    </div>
+                    <div class="lab-item-buttons">
+                        <button class="approve" data-user_id="${id}">Potvrdit</button>
+                        <button class="decline" data-user_id="${id}">Odmítnout</button>
+                    </div>
+                </div>
+                `
+                
+                const removeElementFn = () => document.getElementById(`li-${id}`).remove();
+
+                labItem.querySelector(".approve").onclick = () => approveUser(id, removeElementFn);
+                labItem.querySelector(".decline").onclick = () => declineUser(id, removeElementFn);
+                container.appendChild(labItem);
+            }
+
+            async function load() {
+                await fetch(`${window.location.origin}/{% url 'api_register_requests' %}?page=${page}`)
+                .then(async response => {
+                    let json = await response.json();
+    
+                    if (response.status <= 200 && response.status < 400) {
+                        page++;
+                        hasNext = json.has_next;
+                        return json;
+                    } else {
+                        throw new Error(json.message);
+                    }
+                })
+                .then(data => data.content.map(render_item))
+                .catch(e => console.log(e));
+            }
+
+            while (window.innerHeight >= document.body.offsetHeight && hasNext){
+                await load()
+            }
+
+            window.onscroll = async () => {
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight && hasNext) {
+                    await load();
+                }
+            }
         })
+
     </script>
 
 {% endblock %}

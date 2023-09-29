@@ -28,9 +28,9 @@ def create_datetime_widget(dt_factory: Callable[[], datetime]):
         attrs={
             "type": "datetime-local",
             "class": "form-control",
-            "value": dt_factory().strftime("%d-%m-%Y"),
+            "value": dt_factory().strftime("%Y-%m-%dT09:00"),
         },
-        format="%d-%m-%Y",
+        format="%Y-%m-%d %H:%M",
     )
 
 
@@ -68,7 +68,7 @@ class CreateEventForm(forms.Form):
         required=True,
         validators=[minimum_after_n_days(5)],
         label="Datum a čas",
-        input_formats=["%d.%m.%Y %H:%M"],
+        input_formats=["%Y-%m-%d %H:%M"],
         widget=create_datetime_widget(
             lambda: timezone.now() + timezone.timedelta(days=7)
         ),
@@ -76,7 +76,7 @@ class CreateEventForm(forms.Form):
     close_login = forms.DateTimeField(
         required=True,
         label="Uzávěr přihlášení",
-        input_formats=["%d.%m.%Y %H:%M"],
+        input_formats=["%Y-%m-%d %H:%M"],
         widget=create_datetime_widget(
             lambda: timezone.now() + timezone.timedelta(days=5)
         ),
@@ -84,16 +84,13 @@ class CreateEventForm(forms.Form):
     close_logout = forms.DateTimeField(
         required=True,
         label="Uzávěr odhlášení",
-        input_formats=["%d.%m.%Y %H:%M"],
+        input_formats=["%Y-%m-%d %H:%M"],
         widget=create_datetime_widget(
             lambda: timezone.now() + timezone.timedelta(days=6)
         ),
     )
 
     def __init__(self, topics, *args, **kwargs):
-        kwargs.update(
-            initial={"lab_datetime": timezone.now() + timezone.timedelta(days=2)}
-        )
         super().__init__(*args, **kwargs)
         self.fields["topics"] = forms.MultipleChoiceField(
             choices=topics,
