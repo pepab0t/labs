@@ -13,8 +13,15 @@
 
 {%block content%}
     <div class="container">
-        <h1>Export</h1>
-        <a href="{% url 'api_export_closed'%}">Následující hodiny s uzavřeným odhlášením</a>
-        <a href="{% url 'api_export_history'%}">Historie</a>
+        <div class="inner inner-export">
+            <h2>Export</h2>
+            <div class="export-card lab-item">
+                <!-- <a href="{% url 'api_export_closed'%}">Následující hodiny s uzavřeným odhlášením</a> -->
+                <p>Následující hodiny s uzavřeným odhlášením</p><a href="{% url 'api_export_closed'%}"><button>Stáhnout</button></a>
+            </div>
+            <div class="export-card lab-item">
+                <p>Historie cvičení</p><a href="{% url 'api_export_history'%}"><button>Stáhnout</button></a>
+            </div>
+        </div>
     </div>
 {%endblock%}

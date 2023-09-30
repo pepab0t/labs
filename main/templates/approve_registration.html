@@ -16,21 +16,6 @@
     <div class="container">
         <h2>Žádosti o registraci</h2>
         <div class="inner">
-            {% for user_ in users%}
-                <!-- <div class="lab-item">
-                    <div class="lab-item-wrap lab-item-wrap--reg">
-                        <div>
-                            <h4>{{user_.email}}</h4>
-                            <p>{{user_.fullname}}</p>
-                            <p>Datum registrace: {{user_.date_joined|date_string}}</p>
-                        </div>
-                        <div class="lab-item-buttons">
-                            <button class="approve" data-user_id="{{user_.id}}">Potvrdit</button>
-                            <button class="decline" data-user_id="{{user_.id}}">Odmítnout</button>
-                        </div>
-                    </div>
-                </div> -->
-            {% endfor %}
         </div>
     </div>
 {% endblock %}

@@ -2,6 +2,7 @@
 
 h2 {
     color: var(--dark-grey);
+    text-align: center;
 }
 
 
@@ -49,7 +50,28 @@ h2 {
 }
 
 h3 span {
-    margin-left: 10px;
-    color: #007BFF;
+    margin-right: 10px;
+    color: #0067d4;
     font-size: 24px;
+}
+
+.inner-export {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    flex-direction: column;
+}
+
+.export-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.export-card p {
+    font-size: 18px;
+}
+
+.export-card a {
+    flex: 0;
 }
