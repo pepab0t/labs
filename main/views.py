@@ -280,24 +280,27 @@ def logout_event(request: HttpRequest, event: LabEvent, form: ApplyEventForm):
 
 @login_required
 def event_page(request: HttpRequest, id: int):
-    event = LabEvent.objects.get(pk=id)
+    try:
+        event = LabEvent.objects.get(pk=id)
+    except LabEvent.DoesNotExist:
+        return redirect("home")
+
     free_topics = event.get_free_topics_radios()
 
     if not free_topics:
-        return render_event_page(request, event, form=ApplyEventForm())
-
-    form = ApplyEventForm(
-        free_topics,  # type: ignore
-        request.POST or None,
-        initial={"topics": free_topics[0][0]},  # type: ignore
-    )
+        form = ApplyEventForm()
+    else:
+        form = ApplyEventForm(
+            free_topics,  # type: ignore
+            request.POST or None,
+            initial={"topics": free_topics[0][0]},  # type: ignore
+        )
 
     if request.method == "POST":
         if request.user.is_staff:  # type: ignore
             return render_event_page(request, event, form)
 
-        if (operation := request.GET.get("operation")) is None:
-            raise Exception("missing parameter `operation`")
+        operation = request.GET.get("operation")
 
         match operation:
             case "apply":

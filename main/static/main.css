@@ -109,7 +109,7 @@ a, a:visited, a:hover, a:active {
     line-height: 1.4;
 }
 
-input {
+input[type]:not([type="checkbox"]):not([type="radio"]) {
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;

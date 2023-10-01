@@ -17,6 +17,10 @@ h2 {
     background-color: rgb(193, 228, 248);
 }
 
+.full-background {
+    background-color: rgb(255, 206, 206);
+}
+
 .lab-item-wrap {
     display: flex;
 }

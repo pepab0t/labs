@@ -1,24 +1,15 @@
 
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-}
 
 .form-group {
     margin-bottom: 20px;
     text-align: left;
 }
 
-.form-group label {
+.form-group  label {
     display: block;
     font-size: 14px;
     color: #555;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
 }
 
 .form-group input[type="number"] {
@@ -29,19 +20,11 @@
     font-size: 16px;
 }
 
-.lab-topics .lab-topic {
+
+#label-topics {
     margin-bottom: 10px;
 }
 
-.lab-topic label {
-    font-size: 14px;
-    color: #555;
-    display: block;
-}
-
-.lab-topic input[type="checkbox"] {
-    margin-right: 5px;
-}
 
 .submit-button {
     background-color: #007BFF;
@@ -56,4 +39,28 @@
 
 .submit-button:hover {
     background-color: #0056b3;
+}
+
+.inner-create-event {
+    max-width: 500px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.inner-create-event label {
+    font-size: 16px;
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.center {
+    margin: 0 auto;
+}
+
+label[for^="id_topics"] {
+    margin-bottom: 5px;
 }

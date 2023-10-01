@@ -115,6 +115,7 @@ class LabEvent(models.Model):
             "num_topics": self.topics.count(),
             "num_users": self.get_number_applied_users(),
             "applied": applied,
+            "full": self.is_full(),
         }
 
 

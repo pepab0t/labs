@@ -13,7 +13,12 @@ import re
 def minimum_after_n_days(days: int):
     def validator(value: datetime):
         if timezone.now() + timezone.timedelta(days=days) > value:
-            raise ValidationError(f"Date must be at least after {days} days from now")
+            if days == 1:
+                raise ValidationError(f"Datum musí být nejméně {days} den od teď")
+            elif days in {2, 3, 4}:
+                raise ValidationError(f"Datum musí být nejméně {days} dny od teď")
+            else:
+                raise ValidationError(f"Datum musí být nejméně {days} dní od teď")
 
     return validator
 
