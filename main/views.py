@@ -19,6 +19,7 @@ from .models import CustomUser, LabTopic, LabEvent, LinkTopicEvent
 from django.contrib.admin.views.decorators import staff_member_required
 
 
+@staff_member_required(redirect_field_name="home")
 def create_users(request: HttpRequest):
     for i in range(1, 15):
         CustomUser.objects.create_user(  # type: ignore
