@@ -13,6 +13,8 @@ from django.utils import timezone
 import typing as t
 from .utils import repr_format, official_format
 
+MAX_USER_APPLIES: int = 1
+
 
 def more_than_one_word(value: str):
     if len(value.strip().split()) == 0:
@@ -228,3 +230,9 @@ class CustomUser(AbstractUser):
 
     def get_link_for_event(self, event: LabEvent):
         return self.labs.filter(event=event).first()  # type: ignore
+
+    def get_number_applied_active_labs(self):
+        return self.labs.filter(event__lab_datetime__gte=timezone.now()).count()  # type: ignore
+
+    def can_apply(self):
+        return self.get_number_applied_active_labs() < MAX_USER_APPLIES

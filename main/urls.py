@@ -4,6 +4,7 @@ from . import api
 
 
 urlpatterns = [
+    path("e/", views.error, name="error"),
     path("create_fake_users/", views.create_users, name="create_fake_users"),
     path("", views.home, name="home"),
     path("login/", views.login_user, name="login"),
