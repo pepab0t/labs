@@ -11,8 +11,8 @@ import json
 
 from django.utils import timezone
 
-EVENTS_PER_PAGE: int = 5
-REQUESTS_PER_PAGE: int = 6
+EVENTS_PER_PAGE: int = 10
+REQUESTS_PER_PAGE: int = 10
 
 
 def unauthorized():

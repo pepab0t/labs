@@ -21,11 +21,19 @@
     var page = 1;
     var hasNext = true;
     
-    function createLab({id, lab_date, close_login, close_logout, capacity, num_users, num_topics, applied}) {
+    function createLab({id, lab_date, close_login, close_logout, capacity, num_users, num_topics, applied, full}) {
         const anchor = document.createElement('a');
         anchor.setAttribute("href", `${window.location.origin}/event/${id}`);
+        let classes = ["lab-item", "lab-item-hover"];
+
+        if (applied) {
+            classes.push("applied-background");
+        } else if (full) {
+            classes.push("full-background")
+        }
+
         anchor.innerHTML = `
-            <div class="lab-item ${applied ? 'applied-background': ''} lab-item-hover">
+            <div class="${classes.join(' ')}">
                 <h3><span>${lab_date}</span> Laboratorní cvičení</h3>
                 <div class="lab-item-wrap lab-item-wrap--home">
                     <div>
