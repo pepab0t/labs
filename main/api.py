@@ -11,7 +11,7 @@ import json
 
 from django.utils import timezone
 
-EVENTS_PER_PAGE: int = 10
+EVENTS_PER_PAGE: int = 3
 REQUESTS_PER_PAGE: int = 3
 
 
