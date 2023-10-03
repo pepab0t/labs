@@ -18,8 +18,8 @@
 
 {% block script %}
 <script>
-    var page = 1;
-    var hasNext = true;
+    var page = 0;
+    var pageNext = 1;
     
     function createLab({id, lab_date, close_login, close_logout, capacity, num_users, num_topics, applied, full}) {
         const anchor = document.createElement('a');
@@ -51,35 +51,34 @@
     }
 
     async function load(container) {
-        await fetch(`${window.location.origin}{% url 'api_events'%}?page=${page}`)
-        .then(async response => {
-            let json = await response.json();
-            if (response.status >= 200 && response.status < 400) { 
-                    page++;
-                    hasNext = json.has_next;    
-                    return json;
-            } else {
-                    throw new Error(json.message);
+        page++;
+        const response = await fetch(`${window.location.origin}{% url 'api_events'%}?page=${pageNext}`);
+        let json = await response.json();
+        
+        if (response.status >= 200 && response.status < 400) { 
+            if (json.has_next) {
+                pageNext++;
             }
-        })
-        .then(data => {
-            return data.content.map(item => createLab(item))
-        })
-        .then(tags => tags.forEach(x => container.appendChild(x)))
-        .catch(e => alert(e.message))
+        } else {
+            console.log(json.message);
+            return
+        }
+        json.content
+            .map(createLab)
+            .forEach(lab => container.appendChild(lab));
     }
+
 
     document.addEventListener("DOMContentLoaded", async () => {
         const container = document.querySelector(".container");
 
-        while (document.body.offsetHeight <= window.innerHeight && hasNext) {
+        while (window.innerHeight + 100 >= document.documentElement.scrollHeight && page < pageNext) {
             await load(container);
         }
 
         window.onscroll = () => {
-            // console.log(window.innerHeight + window.scrollY, document.body.offsetHeight)
-            if ((window.innerHeight + window.scrollY >= document.body.offsetHeight) && hasNext) {
-                 load(container);
+            if ( isBottom() && page < pageNext) {
+                load(container);
             }
         }
     })

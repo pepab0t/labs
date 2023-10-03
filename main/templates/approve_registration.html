@@ -23,32 +23,32 @@
 {% block script %}
     <script>
         
-        const createUserOperation = (operation) => {
-            return (id, removeElementFn) => {
-                fetch(`${window.location.origin}/api/${operation}/${id}`)
-                .then(response => {
-                    if (response.status >= 200 && response.status < 400){
-                        removeElementFn();
-                    }
-                    return response.json()
-                })
-                .then(console.log)
-                // location.reload();
-            }
-         }
-
-        function isBottom() {
-            return window.innerHeight + window.scrollY + 1 >= document.documentElement.scrollHeight;
-        }
-
-        const declineUser = createUserOperation('decline');
-        const approveUser = createUserOperation('approve');
-
+        
         var page = 0;
         var pageNext = 1;
-
+        
         document.addEventListener("DOMContentLoaded", async () => {
             const container = document.querySelector(".inner");
+
+            const createUserOperation = (operation) => {
+                return async (id, removeElementFn) => {
+                    if (window.innerHeight + 200 >= document.documentElement.scrollHeight){
+                        await load();
+                    }
+                    fetch(`${window.location.origin}/api/${operation}/${id}`)
+                    .then(response => {
+                        if (response.status >= 200 && response.status < 400){
+                            removeElementFn();
+                        }
+                        return response.json()
+                    })
+                    .then(console.log)
+                    // location.reload();
+                }
+             }
+    
+            const declineUser = createUserOperation('decline');
+            const approveUser = createUserOperation('approve');
 
             function render_item({id, fullname, email, date_joined}){
                 const labItem = document.createElement("div");
@@ -71,13 +71,10 @@
                 
                 const removeElementFn = () => {
                     const target = document.getElementById(`li-${id}`);
-                    // target.remove();
                     const anim = target.animate({opacity: [1, 0]}, {duration: 300, iterations: 1, easing: "ease-in"})
                     anim.onfinish = (e) => {
                         target.remove();
-                        loadUntilScroll();
                     };
-                    // target.style.animation = "disapear 1s forwards";
                 };
 
                 labItem.querySelector(".approve").onclick = () => approveUser(id, removeElementFn);
@@ -87,7 +84,7 @@
 
             async function load() {
                 page++;
-                let response = await fetch(`${window.location.origin}/{% url 'api_register_requests' %}?page=${pageNext}`)
+                let response = await fetch(`${window.location.origin}{% url 'api_register_requests' %}?page=${pageNext}`)
                 let json = await response.json();
 
                 if (response.status <= 200 && response.status < 400) {
@@ -103,13 +100,14 @@
             }
 
             async function loadUntilScroll(){
-                while (window.innerHeight >= document.body.offsetHeight && page < pageNext){
+                while ( window.innerHeight >= document.documentElement.scrollHeight && page < pageNext){
                     await load()
                 }
             }
 
 
             window.onscroll = async () => {
+                // console.log(window.innerHeight + window.scrollY, document.body.offsetHeight);
                 if (isBottom() && page < pageNext) {
                     await load();
                 }
