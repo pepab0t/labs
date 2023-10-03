@@ -241,9 +241,9 @@ def apply_event(request: HttpRequest, event: LabEvent, form: ApplyEventForm):
 
         link = LinkTopicEvent.objects.filter(event=event, topic=topic).first()
 
-        if link.user is None:
-            link.user = request.user
-            link.save()
+        if link.user is None:  # type: ignore
+            link.user = request.user  # type: ignore
+            link.save()  # type: ignore
             return redirect("apply_event", id=event.id)  # type: ignore
 
     return render_event_page(request, event, form, num_applied_users=num_applied_users)
