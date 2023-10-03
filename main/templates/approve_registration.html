@@ -37,11 +37,15 @@
             }
          }
 
+        function isBottom() {
+            return window.innerHeight + window.scrollY + 1 >= document.documentElement.scrollHeight;
+        }
+
         const declineUser = createUserOperation('decline');
         const approveUser = createUserOperation('approve');
 
-        var page = 1;
-        var hasNext = true;
+        var page = 0;
+        var pageNext = 1;
 
         document.addEventListener("DOMContentLoaded", async () => {
             const container = document.querySelector(".inner");
@@ -82,30 +86,31 @@
             }
 
             async function load() {
-                await fetch(`${window.location.origin}/{% url 'api_register_requests' %}?page=${page}`)
-                .then(async response => {
-                    let json = await response.json();
-    
-                    if (response.status <= 200 && response.status < 400) {
-                        page++;
-                        hasNext = json.has_next;
-                        return json;
-                    } else {
-                        throw new Error(json.message);
+                page++;
+                let response = await fetch(`${window.location.origin}/{% url 'api_register_requests' %}?page=${pageNext}`)
+                let json = await response.json();
+
+                if (response.status <= 200 && response.status < 400) {
+                    if (json.has_next) {
+                        pageNext++;
                     }
-                })
-                .then(data => data.content.map(render_item))
-                .catch(e => console.log(e));
+                } else {
+                    console.log(json.message);
+                    return;
+                }
+
+                json.content.forEach(render_item);
             }
 
             async function loadUntilScroll(){
-                while (window.innerHeight >= document.body.offsetHeight && hasNext){
+                while (window.innerHeight >= document.body.offsetHeight && page < pageNext){
                     await load()
                 }
             }
 
+
             window.onscroll = async () => {
-                if (window.innerHeight + window.scrollY >= document.body.offsetHeight && hasNext) {
+                if (isBottom() && page < pageNext) {
                     await load();
                 }
             }
