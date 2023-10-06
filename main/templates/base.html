@@ -74,6 +74,10 @@
         return cookieValue;
     }
 
+    function isBottom() {
+        return window.innerHeight + window.scrollY + 1 >= document.documentElement.scrollHeight;
+    }
+
     const menu = document.querySelector(".menu")
     const toggle = document.querySelector(".navbar__icon")
     const close = document.querySelector(".nav__close")
