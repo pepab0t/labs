@@ -1,0 +1,10 @@
+*.sqlite3
+*.db
+.vscode/
+<<<<<<< HEAD
+venv/
+=======
+venv/
+**.pyc
+**__pycache__**
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
