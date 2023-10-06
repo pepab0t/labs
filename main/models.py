@@ -23,7 +23,7 @@ def more_than_one_word(value: str):
 
 # Create your models here.
 class LabTopic(models.Model):
-    title = models.TextField(
+    title = models.CharField(
         max_length=200, blank=False, validators=[more_than_one_word], unique=True
     )
     created_by = models.ForeignKey(

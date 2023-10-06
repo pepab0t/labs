@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  labs_app:
+    build: .
+    container_name: labs
+    entrypoint: ./entrypoint.sh
+    depends_on:
+      - mysql_labs
+    environment:
+      SECRET_KEY: mysecret
+      LABS_DB_NAME: labs
+      LABS_DB_USER: root
+      LABS_DB_PASSWORD: coffee
+      LABS_DB_HOST: host.docker.internal
+      LABS_DB_PORT: 3306
+      USE_SQLITE: 0
+    ports:
+      - "4000:4000"
+  mysql_labs:
+    container_name: mysql_labs
+    build: ./docker_mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=coffee
+      - DB_NAME=labs
+    ports:
+      - "3306:3306"
+    restart: always
+    volumes:
+      - ./mysql:/var/lib/mysql
+      - ./docker_mysql:/docker-entrypoint-initdb.d

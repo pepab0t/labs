@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-i-y2h4!_kb%no03g-=nxo2g1ib=-o+bqp%2@gh=w%m)&wmd@4t"
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -75,6 +78,7 @@ WSGI_APPLICATION = "labs.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -82,6 +86,16 @@ DATABASES = {
     }
 }
 
+if os.getenv("USE_SQLITE", "0") == "0":
+    DATABASES["default"] = {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.getenv("LABS_DB_NAME"),
+        "USER": os.getenv("LABS_DB_USER"),
+        "PASSWORD": os.getenv("LABS_DB_PASSWORD"),
+        "HOST": os.getenv("LABS_DB_HOST"),
+        "PORT": os.getenv("LABS_DB_PORT"),
+    }
+print(f"HOST: {os.getenv('LABS_DB_HOST')}")
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
