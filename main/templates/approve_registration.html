@@ -1,0 +1,118 @@
+
+
+{% extends 'base.html' %}
+
+{% block title%}Home{% endblock%}
+
+{% load static %}
+
+{% load main_tags %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'home.css'%}">
+{% endblock %}
+
+{%block content%}
+    <div class="container">
+        <h2>Žádosti o registraci</h2>
+        <div class="inner">
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        
+        const createUserOperation = (operation) => {
+            return (id, removeElementFn) => {
+                fetch(`${window.location.origin}/api/${operation}/${id}`)
+                .then(response => {
+                    if (response.status >= 200 && response.status < 400){
+                        removeElementFn();
+                    }
+                    return response.json()
+                })
+                .then(console.log)
+                // location.reload();
+            }
+         }
+
+        const declineUser = createUserOperation('decline');
+        const approveUser = createUserOperation('approve');
+
+        var page = 1;
+        var hasNext = true;
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const container = document.querySelector(".inner");
+
+            function render_item({id, fullname, email, date_joined}){
+                const labItem = document.createElement("div");
+                labItem.classList.add("lab-item");
+                labItem.setAttribute("id", `li-${id}`)
+
+                labItem.innerHTML = `
+                <div class="lab-item-wrap lab-item-wrap--reg">
+                    <div>
+                        <h4>${email}</h4>
+                        <p>${fullname}</p>
+                        <p>Datum registrace: ${date_joined}</p>
+                    </div>
+                    <div class="lab-item-buttons">
+                        <button class="approve" data-user_id="${id}">Potvrdit</button>
+                        <button class="decline" data-user_id="${id}">Odmítnout</button>
+                    </div>
+                </div>
+                `
+                
+                const removeElementFn = () => {
+                    const target = document.getElementById(`li-${id}`);
+                    // target.remove();
+                    const anim = target.animate({opacity: [1, 0]}, {duration: 300, iterations: 1, easing: "ease-in"})
+                    anim.onfinish = (e) => {
+                        target.remove();
+                        loadUntilScroll();
+                    };
+                    // target.style.animation = "disapear 1s forwards";
+                };
+
+                labItem.querySelector(".approve").onclick = () => approveUser(id, removeElementFn);
+                labItem.querySelector(".decline").onclick = () => declineUser(id, removeElementFn);
+                container.appendChild(labItem);
+            }
+
+            async function load() {
+                await fetch(`${window.location.origin}/{% url 'api_register_requests' %}?page=${page}`)
+                .then(async response => {
+                    let json = await response.json();
+    
+                    if (response.status <= 200 && response.status < 400) {
+                        page++;
+                        hasNext = json.has_next;
+                        return json;
+                    } else {
+                        throw new Error(json.message);
+                    }
+                })
+                .then(data => data.content.map(render_item))
+                .catch(e => console.log(e));
+            }
+
+            async function loadUntilScroll(){
+                while (window.innerHeight >= document.body.offsetHeight && hasNext){
+                    await load()
+                }
+            }
+
+            window.onscroll = async () => {
+                if (window.innerHeight + window.scrollY >= document.body.offsetHeight && hasNext) {
+                    await load();
+                }
+            }
+
+            loadUntilScroll();
+        })
+
+    </script>
+
+{% endblock %}
