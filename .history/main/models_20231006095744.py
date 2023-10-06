@@ -13,7 +13,7 @@ from django.utils import timezone
 import typing as t
 from .utils import repr_format, official_format
 
-MAX_USER_APPLIES: int = 1
+MAX_USER_APPLIES: int = 3
 
 
 def more_than_one_word(value: str):

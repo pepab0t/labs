@@ -204,7 +204,7 @@ def remove_user_from_event(request: HttpRequest, event_id: int, user_id: int):
 def export_closed(request: HttpRequest):
     now = timezone.now()
     links = (
-        LinkTopicEvent.objects.filter(event__lab_datetime__gte=now - timedelta(days=2))
+        LinkTopicEvent.objects.filter(event__lab_datetime__gte=now - timedelta(days=1))
         .filter(event__close_logout__lte=now)
         .all()
     )
