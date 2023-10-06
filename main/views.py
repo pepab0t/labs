@@ -200,7 +200,7 @@ def create_event(request: HttpRequest):
             close_logout=form.cleaned_data["close_logout"],
             lab_datetime=form.cleaned_data["lab_datetime"],
         )
-        lab_event.created_by = request.user
+        lab_event.created_by = request.user  # type: ignore
         try:
             lab_event.save()
         except ValidationError as e:
@@ -240,6 +240,7 @@ def apply_event(request: HttpRequest, event: LabEvent, form: ApplyEventForm):
         topic = LabTopic.objects.get(pk=topic_id)
 
         link = LinkTopicEvent.objects.filter(event=event, topic=topic).first()
+        # handle link is None
 
         if link.user is None:  # type: ignore
             link.user = request.user  # type: ignore
