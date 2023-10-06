@@ -16,13 +16,21 @@
             <h1>Laboratoře z Fyziky FS ČVUT</h1>
         {% else %}
 
+<<<<<<< HEAD
         <img class="navbar__icon" src="{% static 'svg/menu.svg'%}" alt="Menu">
 
         <div class="option-container menu" >
+=======
+        <div class="option-container" >
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
             <a href="{% url 'home' %}" class="nav-item">
                     <p>Domů</p>
             </a>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
             {% if user.is_staff %}
             <a href="{% url 'topics'%}" class="nav-item">
                     <p>Témata</p>
@@ -74,37 +82,36 @@
         return cookieValue;
     }
 
-        
-const menu = document.querySelector(".menu")
-const toggle = document.querySelector(".navbar__icon")
-const close = document.querySelector(".nav__close")
+    const menu = document.querySelector(".menu")
+    const toggle = document.querySelector(".navbar__icon")
+    const close = document.querySelector(".nav__close")
 
 
-    toggle.addEventListener("click", ()=> {
-        if (!menu.classList.contains("show-menu")) {
-            menu.classList.add("show-menu")
-        } else if (menu.classList.contains("show-menu")) {
+        toggle.addEventListener("click", ()=> {
+            if (!menu.classList.contains("show-menu")) {
+                menu.classList.add("show-menu")
+            } else if (menu.classList.contains("show-menu")) {
+                menu.classList.remove("show-menu")
+            }
+        })
+
+    if(close) {
+        close.addEventListener("click", ()=> {
             menu.classList.remove("show-menu")
-        }
-    })
+        })
+    }
 
-if(close) {
-    close.addEventListener("click", ()=> {
+
+    const link = document.querySelectorAll(".nav__link");
+
+    function linkAction () {
+        const menu = document.querySelector(".nav__menu")
         menu.classList.remove("show-menu")
-    })
-}
 
+    }
 
-const link = document.querySelectorAll(".nav__link");
-
-function linkAction () {
-    const menu = document.querySelector(".nav__menu")
-    menu.classList.remove("show-menu")
-
-}
-
-link.forEach(n => n.addEventListener("click", linkAction));
-    </script>
+    link.forEach(n => n.addEventListener("click", linkAction));
+        </script>
 
     {% block script %}
     {% endblock %}
