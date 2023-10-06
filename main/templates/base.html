@@ -16,21 +16,13 @@
             <h1>Laboratoře z Fyziky FS ČVUT</h1>
         {% else %}
 
-<<<<<<< HEAD
         <img class="navbar__icon" src="{% static 'svg/menu.svg'%}" alt="Menu">
 
         <div class="option-container menu" >
-=======
-        <div class="option-container" >
->>>>>>> 9e226dca4e55879351b06833d522709091645517
             <a href="{% url 'home' %}" class="nav-item">
                     <p>Domů</p>
             </a>
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 9e226dca4e55879351b06833d522709091645517
             {% if user.is_staff %}
             <a href="{% url 'topics'%}" class="nav-item">
                     <p>Témata</p>
