@@ -41,7 +41,10 @@ h2 {
 .lab-item-buttons {
     display: flex;
     align-items: center;
+<<<<<<< HEAD
+=======
     gap: 10px;
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
 }
 
 @keyframes disapear {
@@ -79,4 +82,41 @@ h3 span {
 
 .export-card a {
     flex: 0;
+<<<<<<< HEAD
 }
+
+/* responsivity */
+
+@media screen and (max-width: 770px) {
+    .lab-item-wrap {
+        flex-direction: column;
+    }
+
+    .container a {
+        width: 100%;
+    }
+  }
+
+  
+@media screen and (max-width: 600px) {
+
+    h3 span {
+        font-size: 20px;
+    }
+
+    .export-card p {
+        font-size: 15px;
+    }
+
+  }
+
+
+  @media screen and (max-width: 400px) {
+    p {
+        font-size: 14px;
+    }
+  }
+
+=======
+}
+>>>>>>> 9e226dca4e55879351b06833d522709091645517

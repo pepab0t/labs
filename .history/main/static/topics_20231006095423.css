@@ -93,7 +93,9 @@
     margin: 10px;
 
     background-color: lightgrey;
+<<<<<<< HEAD
 }
+
 
 @media screen and (max-width: 600px) {
     .topic-item a {
@@ -104,3 +106,6 @@
         padding: 15px;
     }
   }
+=======
+}
+>>>>>>> 9e226dca4e55879351b06833d522709091645517

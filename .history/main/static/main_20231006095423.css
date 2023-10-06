@@ -1,0 +1,237 @@
+* {
+    box-sizing: border-box; 
+}
+
+@font-face {
+    font-family: inter;
+    src: url("./fonts/Inter-Regular.ttf");
+}
+
+.container {
+    flex-grow: 1;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f3f3f3;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.inner {
+    max-width: 800px;
+    width: 80%;
+}
+
+
+body {
+    font-family: "inter";
+    background-color: #f3f3f3;
+    margin: 0;
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.header {
+    background-color: #007BFF;
+    color: #fff;
+    text-align: center;
+    width: 100%;
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    min-height: 60px;
+    height: 80px;
+}
+
+.header:has(h1) {
+    justify-content: center;
+<<<<<<< HEAD
+    align-items: center;
+=======
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
+}
+
+h1 {
+    color: inherit;
+}
+
+.option-container {
+    display: flex;
+    align-items: center;
+}
+
+.option-container a {
+    text-decoration: none;
+    transition: background-color 0.3s;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.option-container a:hover {
+    background-color: #7ebcff;
+}
+
+.nav-item {
+    width: 7rem;
+}
+
+a, a:visited, a:hover, a:active {
+    color: inherit;
+}
+
+/* lab-item  */
+.lab-item {
+    margin-bottom: 20px;
+    padding: 30px;
+    border-radius: 20px;
+    transition: transform 0.2s;
+    background-color: rgb(255, 255, 255);
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.07);
+}
+
+.lab-item-hover:hover {
+    transform: scale(1.02);
+}
+
+.lab-item h3 {
+    margin: 0 0 12px 0;
+    font-size: 20px;
+    color: var(--dark-grey);
+}
+
+.lab-item p {
+    margin: 0;
+    color: var(--light-grey);
+    line-height: 1.4;
+}
+
+input[type]:not([type="checkbox"]):not([type="radio"]) {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    background-color: #f1f1f1;
+}
+
+button {
+    text-decoration: none;
+    color: inherit;
+    padding: 5px 10px;
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    width: 100px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+<<<<<<< HEAD
+}
+
+.navbar__icon {
+    max-width: 30px;
+}
+
+/* Responsivity */
+
+@media screen and (min-width: 1000px) {
+    .navbar__icon {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .navbar__icon {
+        display: block;
+    }
+
+    .nav-item {
+        width: initial;
+        height: 100px;
+    }
+
+    .option-container a {
+        height: 70px;
+        width: 100%;
+    }
+
+    .option-container a:hover {
+        background-color: #007BFF;
+    }
+
+    .menu {
+        position: fixed;
+        background-color: var(--baltic-sea);
+        width: 85%;
+        height: 100vh;
+        top: 0;
+        right: -100%;
+        padding: 100px 0rem 100px 0;
+        -webkit-transition: 0.3s;
+        transition: 0.3s;
+        z-index: 100;
+        background-color: #0056b3;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .show-menu {
+        right: 0;
+    }
+}
+
+
+@media screen and (max-width: 600px) {
+    p {
+        font-size: 15px;
+    }
+
+    h3 {
+        font-size: 20px;
+    }
+
+    .lab-item {
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+
+    .option-container a {
+        width: 30%;
+    }
+
+    .inner {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+  }
+
+  @media screen and (max-width: 400px) {
+    p {
+        font-size: 14px;
+    }
+  }
+
+
+=======
+}
+>>>>>>> 9e226dca4e55879351b06833d522709091645517

@@ -4,7 +4,10 @@ from . import api
 
 
 urlpatterns = [
+<<<<<<< HEAD
+=======
     path("e/", views.error, name="error"),
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
     path("create_fake_users/", views.create_users, name="create_fake_users"),
     path("", views.home, name="home"),
     path("login/", views.login_user, name="login"),

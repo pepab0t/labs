@@ -1,0 +1,28 @@
+
+{% extends 'base.html' %}
+
+{% load static %}
+{% load main_tags %}
+
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'home.css'%}">
+    <link rel="stylesheet" href="{% static 'error.css'%}">
+{%endblock%}
+
+{% block content %}
+<div class="container">
+    <div class="inner inner-center">
+        <div class="lab-item full-background">
+            <h1 id="error-title" >Chyba!</h1>
+            <div class="error-container">
+                {% for error in errors %}
+                    <p class="error-message">{{error}}</p>
+                {% endfor %}
+            </div>
+            <a href="{% url 'home' %}" id="btn-center"><button>Domů</button></a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

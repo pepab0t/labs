@@ -14,16 +14,23 @@ from .forms import (
     CreateEventForm,
     ApplyEventForm,
 )
+<<<<<<< HEAD
+from .models import CustomUser, LabTopic, LabEvent, LinkTopicEvent
+=======
 from .models import CustomUser, LabTopic, LabEvent, LinkTopicEvent, MAX_USER_APPLIES
 from .utils import render_error, render_event_page
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
 
 from django.contrib.admin.views.decorators import staff_member_required
 
 
+<<<<<<< HEAD
+=======
 def error(request: HttpRequest):
     return render_error(request, ["error one", "error two"])
 
 
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
 @staff_member_required(redirect_field_name="home")
 def create_users(request: HttpRequest):
     for i in range(1, 15):
@@ -215,12 +222,46 @@ def create_event(request: HttpRequest):
     return render(request, "create_event.html", {"form": form})
 
 
+<<<<<<< HEAD
+def render_event_page(
+    request: HttpRequest,
+    event: LabEvent,
+    form: ApplyEventForm | None = None,
+    login_message: str = "",
+    logout_message: str = "",
+):
+    if request.user.is_staff:  # type: ignore
+        return render(
+            request,
+            "apply_event.html",
+            {"event": event},
+        )
+
+    return render(
+        request,
+        "apply_event.html",
+        {
+            "event": event,
+            "form": form,
+            "any_free_topics": form is not None and len(form.choices) != 0,
+            "logout_message": logout_message,
+            "login_message": login_message,
+        },
+    )
+
+
+=======
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
 def apply_event(request: HttpRequest, event: LabEvent, form: ApplyEventForm):
     if event.close_login < timezone.now():
         return render_event_page(
             request, event, form, login_message="Čas na přihlášení vypršel"
         )
 
+<<<<<<< HEAD
+    if event.capacity <= event.get_number_applied_users():
+        return render_event_page(request, event, form)
+=======
     if event.capacity <= (num_applied_users := event.get_number_applied_users()):
         return render_event_page(
             request, event, form, num_applied_users=num_applied_users
@@ -234,6 +275,7 @@ def apply_event(request: HttpRequest, event: LabEvent, form: ApplyEventForm):
             num_applied_users=num_applied_users,
             general_error=f"Maximální počet přihlášených cvičení je: {MAX_USER_APPLIES}",
         )
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
 
     if form.is_valid():
         topic_id = int(form.cleaned_data["topics"])
@@ -241,12 +283,21 @@ def apply_event(request: HttpRequest, event: LabEvent, form: ApplyEventForm):
 
         link = LinkTopicEvent.objects.filter(event=event, topic=topic).first()
 
+<<<<<<< HEAD
+        if link.user is None:
+            link.user = request.user
+            link.save()
+            return redirect("apply_event", id=event.id)  # type: ignore
+
+    return render_event_page(request, event, form)
+=======
         if link.user is None:  # type: ignore
             link.user = request.user  # type: ignore
             link.save()  # type: ignore
             return redirect("apply_event", id=event.id)  # type: ignore
 
     return render_event_page(request, event, form, num_applied_users=num_applied_users)
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
 
 
 def logout_event(request: HttpRequest, event: LabEvent, form: ApplyEventForm):
@@ -273,7 +324,11 @@ def event_page(request: HttpRequest, id: int):
     try:
         event = LabEvent.objects.get(pk=id)
     except LabEvent.DoesNotExist:
+<<<<<<< HEAD
+        return redirect("home")
+=======
         return render_error(request, ["Cvičení neexistuje!"])
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
 
     free_topics = event.get_free_topics_radios()
 

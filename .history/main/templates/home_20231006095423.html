@@ -1,0 +1,180 @@
+<<<<<<< HEAD
+{% extends 'base.html' %}
+
+
+{% block title%}Home{% endblock%}
+
+{% load static %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'home.css'%}">
+{% endblock %}
+
+{%block content%}
+    <div class="container">
+        <h2>Následující cvičení</h2>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    var page = 1;
+    var hasNext = true;
+    
+    function createLab({id, lab_date, close_login, close_logout, capacity, num_users, num_topics, applied, full}) {
+        const anchor = document.createElement('a');
+        anchor.setAttribute("href", `${window.location.origin}/event/${id}`);
+        let classes = ["lab-item", "lab-item-hover"];
+
+        if (applied) {
+            classes.push("applied-background");
+        } else if (full) {
+            classes.push("full-background")
+        }
+
+        anchor.innerHTML = `
+            <div class="${classes.join(' ')}">
+                <h3><span>${lab_date}</span> Laboratorní&nbsp;cvičení</h3>
+                <div class="lab-item-wrap lab-item-wrap--home">
+                    <div>
+                        <p>Datum uzávěru přihlášení: ${close_login}</p>
+                        <p>Datum uzávěru odhlášení: ${close_logout}</p>
+                    </div>
+                    <div>
+                        <p>Počet témat: ${num_topics}</p>
+                        <p>Přihlášeni: ${num_users}/${capacity}</p>
+                    </div>
+                </div>
+            </div>
+        `
+        return anchor;
+    }
+
+    async function load(container) {
+        await fetch(`${window.location.origin}{% url 'api_events'%}?page=${page}`)
+        .then(async response => {
+            let json = await response.json();
+            if (response.status >= 200 && response.status < 400) { 
+                    page++;
+                    hasNext = json.has_next;    
+                    return json;
+            } else {
+                    throw new Error(json.message);
+            }
+        })
+        .then(data => {
+            return data.content.map(item => createLab(item))
+        })
+        .then(tags => tags.forEach(x => container.appendChild(x)))
+        .catch(e => alert(e.message))
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        const container = document.querySelector(".container");
+
+        while (document.body.offsetHeight <= window.innerHeight && hasNext) {
+            await load(container);
+        }
+
+        window.onscroll = () => {
+            // console.log(window.innerHeight + window.scrollY, document.body.offsetHeight)
+            if ((window.innerHeight + window.scrollY >= document.body.offsetHeight) && hasNext) {
+                 load(container);
+            }
+        }
+    })
+
+</script>
+
+{% endblock %}
+=======
+{% extends 'base.html' %}
+
+
+{% block title%}Home{% endblock%}
+
+{% load static %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'home.css'%}">
+{% endblock %}
+
+{%block content%}
+    <div class="container">
+        <h2>Následující cvičení</h2>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    var page = 0;
+    var pageNext = 1;
+    
+    function createLab({id, lab_date, close_login, close_logout, capacity, num_users, num_topics, applied, full}) {
+        const anchor = document.createElement('a');
+        anchor.setAttribute("href", `${window.location.origin}/event/${id}`);
+        let classes = ["lab-item", "lab-item-hover"];
+
+        if (applied) {
+            classes.push("applied-background");
+        } else if (full) {
+            classes.push("full-background")
+        }
+
+        anchor.innerHTML = `
+            <div class="${classes.join(' ')}">
+                <h3><span>${lab_date}</span> Laboratorní cvičení</h3>
+                <div class="lab-item-wrap lab-item-wrap--home">
+                    <div>
+                        <p>Datum uzávěru přihlášení: ${close_login}</p>
+                        <p>Datum uzávěru odhlášení: ${close_logout}</p>
+                    </div>
+                    <div>
+                        <p>Počet témat: ${num_topics}</p>
+                        <p>Přihlášeni: ${num_users}/${capacity}</p>
+                    </div>
+                </div>
+            </div>
+        `
+        return anchor;
+    }
+
+    async function load(container) {
+        page++;
+        const response = await fetch(`${window.location.origin}{% url 'api_events'%}?page=${pageNext}`);
+        let json = await response.json();
+        
+        if (response.status >= 200 && response.status < 400) { 
+            if (json.has_next) {
+                pageNext++;
+            }
+        } else {
+            console.log(json.message);
+            return
+        }
+        json.content
+            .map(createLab)
+            .forEach(lab => container.appendChild(lab));
+    }
+
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        const container = document.querySelector(".container");
+
+        while (window.innerHeight + 100 >= document.documentElement.scrollHeight && page < pageNext) {
+            await load(container);
+        }
+
+        window.onscroll = () => {
+            if ( isBottom() && page < pageNext) {
+                load(container);
+            }
+        }
+    })
+
+</script>
+
+{% endblock %}
+>>>>>>> 9e226dca4e55879351b06833d522709091645517

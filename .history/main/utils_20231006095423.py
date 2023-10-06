@@ -1,9 +1,15 @@
+<<<<<<< HEAD
+from typing import Protocol
+=======
 from typing import Protocol, TYPE_CHECKING
-from django.http import HttpRequest
 from django.shortcuts import render as _render
+from django.http import HttpRequest
+
 if TYPE_CHECKING:
     from .models import LabEvent
     from .forms import ApplyEventForm
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
+
 
 class DateFormatable(Protocol):
     def strftime(self, __format: str) -> str:
@@ -20,6 +26,9 @@ def repr_format(d: DateFormatable):
 
 def official_format(d: DateFormatable):
     return d.strftime(OFFICIAL_FORMAT)
+<<<<<<< HEAD
+=======
+
 
 def render_error(request: HttpRequest, errors: list[str]):
     return _render(request, "error_page.html", {"errors": errors})
@@ -40,6 +49,7 @@ def render_event_page(
             "apply_event.html",
             {"event": event},
         )
+
     return _render(
         request,
         "apply_event.html",
@@ -53,3 +63,4 @@ def render_event_page(
             "num_applied_users": num_applied_users,
         },
     )
+>>>>>>> 9e226dca4e55879351b06833d522709091645517

@@ -67,6 +67,7 @@
 
     <script>
         function getCookie(name) {
+<<<<<<< HEAD
         var cookieValue = null;
         if (document.cookie && document.cookie !== '') {
             var cookies = document.cookie.split(';');
@@ -82,37 +83,62 @@
         return cookieValue;
     }
 
-    const menu = document.querySelector(".menu")
-    const toggle = document.querySelector(".navbar__icon")
-    const close = document.querySelector(".nav__close")
+        
+const menu = document.querySelector(".menu")
+const toggle = document.querySelector(".navbar__icon")
+const close = document.querySelector(".nav__close")
 
 
-        toggle.addEventListener("click", ()=> {
-            if (!menu.classList.contains("show-menu")) {
-                menu.classList.add("show-menu")
-            } else if (menu.classList.contains("show-menu")) {
-                menu.classList.remove("show-menu")
-            }
-        })
-
-    if(close) {
-        close.addEventListener("click", ()=> {
+    toggle.addEventListener("click", ()=> {
+        if (!menu.classList.contains("show-menu")) {
+            menu.classList.add("show-menu")
+        } else if (menu.classList.contains("show-menu")) {
             menu.classList.remove("show-menu")
-        })
-    }
+        }
+    })
 
-
-    const link = document.querySelectorAll(".nav__link");
-
-    function linkAction () {
-        const menu = document.querySelector(".nav__menu")
+if(close) {
+    close.addEventListener("click", ()=> {
         menu.classList.remove("show-menu")
+    })
+}
 
-    }
 
-    link.forEach(n => n.addEventListener("click", linkAction));
-        </script>
+const link = document.querySelectorAll(".nav__link");
 
+function linkAction () {
+    const menu = document.querySelector(".nav__menu")
+    menu.classList.remove("show-menu")
+
+}
+
+link.forEach(n => n.addEventListener("click", linkAction));
+    </script>
+
+=======
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function isBottom() {
+            return window.innerHeight + window.scrollY + 1 >= document.documentElement.scrollHeight;
+        }
+    </script>
+
+
+
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
     {% block script %}
     {% endblock %}
     

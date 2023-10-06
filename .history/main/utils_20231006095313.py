@@ -1,9 +1,6 @@
-from typing import Protocol, TYPE_CHECKING
+from typing import Protocol
 from django.http import HttpRequest
 from django.shortcuts import render as _render
-if TYPE_CHECKING:
-    from .models import LabEvent
-    from .forms import ApplyEventForm
 
 class DateFormatable(Protocol):
     def strftime(self, __format: str) -> str:
@@ -34,7 +31,7 @@ def render_event_page(
     general_error: str = "",
     num_applied_users: int | None = None,
 ):
-    if request.user.is_staff:  # type: ignore
+   if request.user.is_staff:  # type: ignore
         return _render(
             request,
             "apply_event.html",

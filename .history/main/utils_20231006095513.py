@@ -1,4 +1,4 @@
-from typing import Protocol, TYPE_CHECKING
+from typing import Protocol
 from django.http import HttpRequest
 from django.shortcuts import render as _render
 if TYPE_CHECKING:

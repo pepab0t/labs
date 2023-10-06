@@ -1,9 +1,9 @@
-from typing import Protocol, TYPE_CHECKING
+from typing import Protocol
 from django.http import HttpRequest
-from django.shortcuts import render as _render
 if TYPE_CHECKING:
     from .models import LabEvent
     from .forms import ApplyEventForm
+from django.shortcuts import render as _render
 
 class DateFormatable(Protocol):
     def strftime(self, __format: str) -> str:

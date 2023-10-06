@@ -10,10 +10,16 @@ from .models import LabTopic, LabEvent, CustomUser, LinkTopicEvent
 import json
 
 from django.utils import timezone
+<<<<<<< HEAD
+
+EVENTS_PER_PAGE: int = 10
+REQUESTS_PER_PAGE: int = 10
+=======
 from datetime import timedelta
 
 EVENTS_PER_PAGE: int = 3
 REQUESTS_PER_PAGE: int = 3
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
 
 
 def unauthorized():
@@ -204,7 +210,11 @@ def remove_user_from_event(request: HttpRequest, event_id: int, user_id: int):
 def export_closed(request: HttpRequest):
     now = timezone.now()
     links = (
+<<<<<<< HEAD
+        LinkTopicEvent.objects.filter(event__lab_datetime__gte=now)
+=======
         LinkTopicEvent.objects.filter(event__lab_datetime__gte=now - timedelta(days=2))
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
         .filter(event__close_logout__lte=now)
         .all()
     )
@@ -221,9 +231,13 @@ def export_closed(request: HttpRequest):
 def export_history(request: HttpRequest):
     now = timezone.now()
 
+<<<<<<< HEAD
+    links = LinkTopicEvent.objects.filter(event__lab_datetime__lte=now).all()
+=======
     links = LinkTopicEvent.objects.filter(
         event__lab_datetime__lte=now, event__lab_datetime__gte=now - timedelta(weeks=30)
     ).all()
+>>>>>>> 9e226dca4e55879351b06833d522709091645517
 
     content: str = LinkTopicEvent.links_to_csv(links)
     response = HttpResponse(content, content_type="text/csv")
