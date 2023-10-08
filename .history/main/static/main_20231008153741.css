@@ -51,10 +51,7 @@ body {
 
 .header:has(h1) {
     justify-content: center;
-<<<<<<< HEAD
     align-items: center;
-=======
->>>>>>> 9e226dca4e55879351b06833d522709091645517
 }
 
 h1 {
@@ -142,7 +139,6 @@ button {
 
 button:hover {
     background-color: #0056b3;
-<<<<<<< HEAD
 }
 
 .navbar__icon {
@@ -213,7 +209,7 @@ button:hover {
     }
 
     .option-container a {
-        width: 30%;
+        width: 100%;
     }
 
     .inner {
@@ -232,6 +228,3 @@ button:hover {
   }
 
 
-=======
-}
->>>>>>> 9e226dca4e55879351b06833d522709091645517

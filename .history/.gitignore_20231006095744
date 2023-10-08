@@ -1,6 +1,0 @@
-*.sqlite3
-*.db
-.vscode/
-venv/
-**.pyc
-**__pycache__**

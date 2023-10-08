@@ -33,6 +33,11 @@ h2 {
     justify-content: space-between;
 }
 
+.lab-info {
+    margin-bottom: 15px;
+}
+
+
 .lab-item-wrap h4 {
     margin-top: 0;
     margin-bottom: 10px;
@@ -41,10 +46,7 @@ h2 {
 .lab-item-buttons {
     display: flex;
     align-items: center;
-<<<<<<< HEAD
-=======
     gap: 10px;
->>>>>>> 9e226dca4e55879351b06833d522709091645517
 }
 
 @keyframes disapear {
@@ -82,10 +84,7 @@ h3 span {
 
 .export-card a {
     flex: 0;
-<<<<<<< HEAD
 }
-
-/* responsivity */
 
 @media screen and (max-width: 770px) {
     .lab-item-wrap {
@@ -116,7 +115,3 @@ h3 span {
         font-size: 14px;
     }
   }
-
-=======
-}
->>>>>>> 9e226dca4e55879351b06833d522709091645517
