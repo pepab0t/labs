@@ -7,13 +7,13 @@ services:
     depends_on:
       - mysql_labs
     environment:
-      SECRET_KEY: mysecret
-      LABS_DB_NAME: labs
-      LABS_DB_USER: root
-      LABS_DB_PASSWORD: coffee
-      LABS_DB_HOST: host.docker.internal
-      LABS_DB_PORT: 3306
-      USE_SQLITE: 0
+      SECRET_KEY: ${SECRET_KEY}
+      LABS_DB_NAME: ${LABS_DB_NAME}
+      LABS_DB_USER: ${LABS_DB_USER}
+      LABS_DB_PASSWORD: ${LABS_DB_PASSWORD}
+      LABS_DB_HOST: mysql_labs
+      LABS_DB_PORT: ${LABS_DB_PORT}
+      USE_SQLITE: ${USE_SQLITE}
     ports:
       - "4000:4000"
   mysql_labs:
