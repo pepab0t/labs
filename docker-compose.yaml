@@ -15,16 +15,20 @@ services:
       LABS_DB_PORT: ${LABS_DB_PORT}
       USE_SQLITE: ${USE_SQLITE}
     ports:
-      - "4000:4000"
+      - "8000:8000"
+    networks:
+      - nginxproxymanager_default
   mysql_labs:
     container_name: mysql_labs
     build: ./docker_mysql
     environment:
       - MYSQL_ROOT_PASSWORD=coffee
       - DB_NAME=labs
-    ports:
-      - "3306:3306"
     restart: always
     volumes:
       - ./mysql:/var/lib/mysql
       - ./docker_mysql:/docker-entrypoint-initdb.d
+  
+networks:
+  nginxproxymanager_default:
+    external: true
