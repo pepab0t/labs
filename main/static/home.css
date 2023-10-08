@@ -33,6 +33,7 @@ h2 {
     justify-content: space-between;
 }
 
+
 .lab-item-wrap h4 {
     margin-top: 0;
     margin-bottom: 10px;
@@ -80,3 +81,37 @@ h3 span {
 .export-card a {
     flex: 0;
 }
+
+@media screen and (max-width: 770px) {
+    .lab-item-wrap {
+        flex-direction: column;
+    }
+
+    .container a {
+        width: 100%;
+    }
+
+    .lab-info {
+        margin-bottom: 15px;
+    }
+  }
+
+  
+@media screen and (max-width: 600px) {
+
+    h3 span {
+        font-size: 20px;
+    }
+
+    .export-card p {
+        font-size: 15px;
+    }
+
+  }
+
+
+  @media screen and (max-width: 400px) {
+    p {
+        font-size: 14px;
+    }
+  }
