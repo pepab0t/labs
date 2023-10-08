@@ -43,7 +43,6 @@ def render_event_page(
             "apply_event.html",
             {"event": event},
         )
-
     return _render(
         request,
         "apply_event.html",

@@ -94,3 +94,13 @@
 
     background-color: lightgrey;
 }
+
+@media screen and (max-width: 600px) {
+    .topic-item a {
+        width: 90px;
+    }
+
+    .topic-item {
+        padding: 15px;
+    }
+  }

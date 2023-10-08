@@ -16,11 +16,12 @@
             <h1>Laboratoře z Fyziky FS ČVUT</h1>
         {% else %}
 
-        <div class="option-container" >
+        <img class="navbar__icon" src="{% static 'svg/menu.svg'%}" alt="Menu">
+
+        <div class="option-container menu" >
             <a href="{% url 'home' %}" class="nav-item">
                     <p>Domů</p>
             </a>
-
 
             {% if user.is_staff %}
             <a href="{% url 'topics'%}" class="nav-item">
@@ -58,27 +59,55 @@
 
     <script>
         function getCookie(name) {
-            var cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                var cookies = document.cookie.split(';');
-                for (var i = 0; i < cookies.length; i++) {
-                    var cookie = cookies[i].trim();
-                    // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
+        var cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = cookies[i].trim();
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
                 }
             }
-            return cookieValue;
         }
+        return cookieValue;
+    }
 
-        function isBottom() {
-            return window.innerHeight + window.scrollY + 1 >= document.documentElement.scrollHeight;
-        }
-    </script>
+    function isBottom() {
+        return window.innerHeight + window.scrollY + 1 >= document.documentElement.scrollHeight;
+    }
+
+    const menu = document.querySelector(".menu")
+    const toggle = document.querySelector(".navbar__icon")
+    const close = document.querySelector(".nav__close")
 
 
+        toggle.addEventListener("click", ()=> {
+            if (!menu.classList.contains("show-menu")) {
+                menu.classList.add("show-menu")
+            } else if (menu.classList.contains("show-menu")) {
+                menu.classList.remove("show-menu")
+            }
+        })
+
+    if(close) {
+        close.addEventListener("click", ()=> {
+            menu.classList.remove("show-menu")
+        })
+    }
+
+
+    const link = document.querySelectorAll(".nav__link");
+
+    function linkAction () {
+        const menu = document.querySelector(".nav__menu")
+        menu.classList.remove("show-menu")
+
+    }
+
+    link.forEach(n => n.addEventListener("click", linkAction));
+        </script>
 
     {% block script %}
     {% endblock %}

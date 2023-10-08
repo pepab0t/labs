@@ -51,6 +51,7 @@ body {
 
 .header:has(h1) {
     justify-content: center;
+    align-items: center;
 }
 
 h1 {
@@ -139,3 +140,91 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+.navbar__icon {
+    max-width: 30px;
+}
+
+/* Responsivity */
+
+@media screen and (min-width: 1000px) {
+    .navbar__icon {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .navbar__icon {
+        display: block;
+    }
+
+    .nav-item {
+        width: initial;
+        height: 100px;
+    }
+
+    .option-container a {
+        height: 70px;
+        width: 100%;
+    }
+
+    .option-container a:hover {
+        background-color: #007BFF;
+    }
+
+    .menu {
+        position: fixed;
+        background-color: var(--baltic-sea);
+        width: 85%;
+        height: 100vh;
+        top: 0;
+        right: -100%;
+        padding: 100px 0rem 100px 0;
+        -webkit-transition: 0.3s;
+        transition: 0.3s;
+        z-index: 100;
+        background-color: #0056b3;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .show-menu {
+        right: 0;
+    }
+}
+
+
+@media screen and (max-width: 600px) {
+    p {
+        font-size: 15px;
+    }
+
+    h3 {
+        font-size: 20px;
+    }
+
+    .lab-item {
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+
+    .option-container a {
+        width: 100%;
+    }
+
+    .inner {
+        width: 100%;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+  }
+
+  @media screen and (max-width: 400px) {
+    p {
+        font-size: 14px;
+    }
+  }
+
+

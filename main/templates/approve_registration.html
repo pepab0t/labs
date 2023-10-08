@@ -57,7 +57,7 @@
 
                 labItem.innerHTML = `
                 <div class="lab-item-wrap lab-item-wrap--reg">
-                    <div>
+                    <div class="lab-info">
                         <h4>${email}</h4>
                         <p>${fullname}</p>
                         <p>Datum registrace: ${date_joined}</p>
@@ -104,7 +104,6 @@
                     await load()
                 }
             }
-
 
             window.onscroll = async () => {
                 // console.log(window.innerHeight + window.scrollY, document.body.offsetHeight);

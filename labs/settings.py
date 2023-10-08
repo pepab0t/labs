@@ -78,7 +78,6 @@ WSGI_APPLICATION = "labs.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -95,7 +94,6 @@ if os.getenv("USE_SQLITE", "0") == "0":
         "HOST": os.getenv("LABS_DB_HOST"),
         "PORT": os.getenv("LABS_DB_PORT"),
     }
-print(f"HOST: {os.getenv('LABS_DB_HOST')}")
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
