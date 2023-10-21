@@ -16,8 +16,8 @@ services:
       USE_SQLITE: ${USE_SQLITE}
     ports:
       - "8000:8000"
-    networks:
-      - nginxproxymanager_default
+    # networks:
+    #   - nginxproxymanager_default
   mysql_labs:
     container_name: mysql_labs
     build: ./docker_mysql
