@@ -40,14 +40,16 @@ def create_datetime_widget(dt_factory: Callable[[], datetime]):
 
 
 class LoginForm(forms.Form):
-    email = forms.EmailField(label="Email", validators=[cvut_email])
-    password = forms.CharField(label="Heslo", widget=forms.PasswordInput())
+    email = forms.EmailField(label="Email", validators=[cvut_email], max_length=50)
+    password = forms.CharField(
+        label="Heslo", widget=forms.PasswordInput(), max_length=50
+    )
 
 
 class RegisterForm(LoginForm):
-    fullname = forms.CharField(label="Jméno a příjmění", max_length=100, min_length=5)
+    fullname = forms.CharField(label="Jméno a příjmění", max_length=50, min_length=5)
     password_confirm = forms.CharField(
-        label="Heslo znovu", widget=forms.PasswordInput()
+        label="Heslo znovu", widget=forms.PasswordInput(), max_length=50
     )
 
     field_order = ["fullname", "email", "password", "password_confirm"]
