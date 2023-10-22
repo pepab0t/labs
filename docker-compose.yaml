@@ -1,34 +1,30 @@
 version: '3.8'
 services:
-  labs_app:
+  labs:
     build: .
     container_name: labs
-    entrypoint: ./entrypoint.sh
     depends_on:
-      - mysql_labs
+      - db
+    env_file:
+      - .env
+  db:
+    container_name: labs_db
+    build: ./db_setup
     environment:
-      SECRET_KEY: ${SECRET_KEY}
-      LABS_DB_NAME: ${LABS_DB_NAME}
-      LABS_DB_USER: ${LABS_DB_USER}
-      LABS_DB_PASSWORD: ${LABS_DB_PASSWORD}
-      LABS_DB_HOST: mysql_labs
-      LABS_DB_PORT: ${LABS_DB_PORT}
-      USE_SQLITE: ${USE_SQLITE}
-    ports:
-      - "8000:8000"
-    # networks:
-    #   - nginxproxymanager_default
-  mysql_labs:
-    container_name: mysql_labs
-    build: ./docker_mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=coffee
-      - DB_NAME=labs
+      - MYSQL_ROOT_PASSWORD=${LABS_DB_PASSWORD}
+      - DB_NAME=${LABS_DB_NAME}
     restart: always
     volumes:
-      - ./mysql:/var/lib/mysql
-      - ./docker_mysql:/docker-entrypoint-initdb.d
-  
-networks:
-  nginxproxymanager_default:
-    external: true
+      - ./mysql_vol:/var/lib/mysql
+      - ./db_setup:/docker-entrypoint-initdb.d
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./proxy/data:/data
+      - ./proxy/letsencrypt:/etc/letsencrypt
+

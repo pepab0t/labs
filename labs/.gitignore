@@ -1,0 +1,8 @@
+*.sqlite3
+*.db
+.vscode/
+venv/
+**.pyc
+**__pycache__**
+mysql/
+.history/

@@ -1,7 +1,2 @@
-venv/
-.vscode/
-mysql/
-*.sqlite3
-**.pyc
-**__pycache__
 .env
+mysql_vol/

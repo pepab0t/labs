@@ -5,15 +5,15 @@ WORKDIR /app
 RUN apk update 
 RUN apk add --virtual build-deps gcc python3-dev musl-dev 
 RUN apk add --no-cache mariadb-dev
+RUN pip install --upgrade pip
 RUN pip install mysqlclient
 RUN apk del build-deps
 
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY . .
+COPY ./labs .
 
-COPY entrypoint.sh .
-RUN chmod +x ./entrypoint.sh
+COPY ./entrypoint.sh /
 
-EXPOSE 4000
+ENTRYPOINT ["sh", "/entrypoint.sh"]
